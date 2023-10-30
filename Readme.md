@@ -23,7 +23,7 @@ spawn a scroller-entity with:
   commands.spawn((
     ScrollerGenerator::SpriteSingle("scroller_image.png".into()),
     ScrollerSize {
-      size: Vec2::new(primary_window.width(), 300.),
+      size: Vec2::new(500., 300.),
     },
     ScrollerBundle {
       scroller: Scroller {
