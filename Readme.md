@@ -40,11 +40,11 @@ spawn a scroller-entity with:
 
 | example| image | description |
 |----|-----|---------------|
-| [single](examples/parallax.rs) | a | shows a basic usage |
-| [sequence](examples/sequence.rs) | a | shows a usage of sequence generator |
-| [random_sequence](examples/random_sequence.rs) | a | shows random sequence generator |
-| [multiple](examples/multiple.rs) | a | example of muptiple scrollers |
-| [mirrors](examples/mirrors.rs) | a | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
+| [single](examples/parallax.rs) | | shows a basic usage |
+| [sequence](examples/sequence.rs) | | shows a usage of sequence generator |
+| [random_sequence](examples/random_sequence.rs) | | shows random sequence generator |
+| [multiple](examples/multiple.rs) | | example of muptiple scrollers |
+| [mirrors](examples/mirrors.rs) | | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
 
 ## Credits
