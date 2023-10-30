@@ -1,0 +1,15 @@
+[package]
+edition = "2021"
+name = "bevy_scroller"
+version = "0.1.0"
+
+[dependencies]
+bevy = { version = "0.11.3" }
+bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", optional = true }
+rand = "0.8.5"
+
+[features]
+dev = ["bevy/dynamic_linking", "dep:bevy_editor_pls"]
+
+[dev-dependencies]
+rstest = "0.18.2"
