@@ -23,7 +23,7 @@ pub fn start(
 
   commands.spawn(Camera2dBundle::default());
   let images = (1..=7)
-    .map(|i| format!("gems_{:03}.png", i))
+    .map(|i| format!("gems/{i}.png"))
     .collect::<VecDeque<String>>();
   let images_handles = images
     .iter()

@@ -20,7 +20,7 @@ pub fn start(
   let primary_window = windows.get_single().expect("no primary window");
 
   let images = (1..=7)
-    .map(|i| format!("gems_{:03}.png", i))
+    .map(|i| format!("gems/{i}.png"))
     .collect::<Vec<String>>();
   let images_handles = images
     .iter()
