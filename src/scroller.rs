@@ -95,7 +95,6 @@ pub fn init(
   mut images: ResMut<Assets<Image>>,
 ) {
   for (scroller_entity, mut scroller, scroller_size, maybe_transform) in q_scroller.iter_mut() {
-    println!("initializing scroller");
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
     scroller.start = -scroller.end;
     scroller.spawn_edge = scroller.end;
@@ -167,7 +166,6 @@ pub fn wait_items(
 ) {
   for (entity, scroller, mut visibility) in q_scroller.iter_mut() {
     if !scroller.new_item_needed() {
-      println!("scroller full of items");
       *visibility = Visibility::Inherited;
       commands.entity(entity).insert(ScrollerInitialized);
     }
