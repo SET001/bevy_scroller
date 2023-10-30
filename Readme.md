@@ -44,7 +44,7 @@ spawn a scroller-entity with:
 | [sequence](examples/sequence.rs) | | shows a usage of sequence generator |
 | [random_sequence](examples/random_sequence.rs) | | shows random sequence generator |
 | [multiple](examples/multiple.rs) | | example of muptiple scrollers |
-| [mirrors](examples/mirrors.rs) | | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
+| [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
 
 ## Credits

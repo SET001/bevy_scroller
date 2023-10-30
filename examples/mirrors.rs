@@ -33,7 +33,7 @@ pub fn start(
   commands.spawn(Camera2dBundle::default());
 
   let images = (1..=7)
-    .map(|i| format!("gems_{:03}.png", i))
+    .map(|i| format!("gems/{i}.png"))
     .collect::<Vec<String>>();
   let images_handles = images
     .iter()
@@ -44,7 +44,7 @@ pub fn start(
   commands.spawn((
     ScrollerGenerator::SpriteRandomSequence(
       (1..=7)
-        .map(|i| format!("gems_{:03}.png", i))
+        .map(|i| format!("gems/{i}.png"))
         .collect::<Vec<String>>(),
     ),
     ScrollerSize {
@@ -52,7 +52,7 @@ pub fn start(
     },
     ScrollerBundle {
       scroller: Scroller {
-        speed: 0.5,
+        speed: 1.,
         render_layer: Some(1),
         ..default()
       },
