@@ -7,7 +7,7 @@ Bevy plugin to scroll things and create parallaxes with custom logic for item ge
 ## Examples
 
 - single
-- ![parallax](assets/example_parallax.gif)
+- parallax ![parallax](assets/examples/parallax.gif)
 
 ## Credits
 - [gems](https://opengameart.org/content/gems-set-01)
