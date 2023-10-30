@@ -7,7 +7,7 @@ Bevy plugin to scroll things and create paralaxes with custom logic for item gen
 ## Examples
 
 - single
--
+- parralax ![cyberpunk](assets/example_parallax.gif)
 
 ## Credits
 - [gems](https://opengameart.org/content/gems-set-01)

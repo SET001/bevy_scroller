@@ -29,6 +29,8 @@ fn start(
   let item_height = 1980_f32;
   let direction = ScrollerDirection::Backward;
   let primary_window = windows.get_single().expect("no primary window");
+  let scroller_speed_min = 0.2;
+  let scroller_speed_step = 0.2;
   commands.spawn(Camera2dBundle::default());
 
   let images = (0..=5)
@@ -56,7 +58,7 @@ fn start(
       },
       ScrollerBundle {
         scroller: Scroller {
-          speed: 0.5 + i as f32 * 0.5,
+          speed: scroller_speed_min + i as f32 * scroller_speed_step,
           direction: direction.clone(),
           ..default()
         },
