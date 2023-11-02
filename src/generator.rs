@@ -8,7 +8,6 @@ use crate::{Scroller, ScrollerItem};
 #[derive(Component, Reflect)]
 #[reflect(Component)]
 pub enum ScrollerGenerator {
-  SpriteSingleHandle(Handle<Image>),
   SpriteSingle(String),
   SpriteSequence(VecDeque<String>),
   SpriteRandomSequence(Vec<String>),
@@ -84,7 +83,6 @@ pub fn generator(
             );
           };
         }
-        _ => {}
       }
     }
   }

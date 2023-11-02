@@ -1,6 +1,8 @@
 pub struct ScrollerPlugin;
 
-use crate::{generator::generator, scroller::*, ScrollerGenerator};
+use crate::{
+  generator::generator, generators::poisson::poisson_generator, scroller::*, ScrollerGenerator,
+};
 use bevy::prelude::*;
 
 #[cfg(feature = "dev")]
@@ -22,7 +24,7 @@ impl Plugin for ScrollerPlugin {
           update,
           #[cfg(feature = "dev")]
           scroller_debug,
-          (generator, apply_deferred, on_items_added).chain(),
+          (generator, poisson_generator, apply_deferred, on_items_added).chain(),
         ),
       )
       .add_systems(PostUpdate, (wait_items, delete_items));
