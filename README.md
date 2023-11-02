@@ -38,7 +38,7 @@ spawn a scroller-entity with:
 
 ## Examples
 
-| example| image | description |
+| example| preview | description |
 |----|-----|---------------|
 | [single](examples/parallax.rs) | | shows a basic usage |
 | [sequence](examples/sequence.rs) | | shows a usage of sequence generator |
@@ -46,6 +46,7 @@ spawn a scroller-entity with:
 | [multiple](examples/multiple.rs) | | example of muptiple scrollers |
 | [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
+| [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | showing how you can set up a parallax with this plugin |
 
 ## Credits
 - [gems](https://opengameart.org/content/gems-set-01)
