@@ -6,7 +6,7 @@ You can also create parallaxes with it.
 ## Features
 
 1. Change scroll direction
-1. Support dfferent scroll item sizes
+1. Support different scroll item sizes
 1. Render to texture
 1. Pre-build generators:
     1. Single - repeat single image
