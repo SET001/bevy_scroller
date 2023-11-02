@@ -4,6 +4,7 @@ Bevy plugin to scroll things. It allow to write generators with custom logic for
 You can also create parallaxes with it.
 
 ## Features
+
 1. Change scroll direction
 1. Support dfferent scroll item sizes
 1. Render to texture
@@ -13,7 +14,15 @@ You can also create parallaxes with it.
     1. Random Sequence - scroller will consist of random iamge from sequence
     1. Custom generators - set up your own system to generate scroller items. With this, you can scroll not only images but anything
 
+## Todo
+
+- [ ] make it work with spritesheets
+- [ ] scroller run conditions (when player moved, for instance)
+- [ ] change scroll direction on the go
+- [ ] some cases might be optimised with using shaders.
+
 ## Usage
+
 spawn a scroller-entity with:
 1. ScrollerSize component
 1. Scroller component
@@ -49,5 +58,6 @@ spawn a scroller-entity with:
 | [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. |
 
 ## Credits
+
 - [gems](https://opengameart.org/content/gems-set-01)
 - [parallax](https://ansimuz.itch.io/mountain-dusk-parallax-background)
