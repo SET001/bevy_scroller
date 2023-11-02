@@ -25,7 +25,6 @@ fn start(mut commands: Commands, primary_window: Query<&Window, With<PrimaryWind
     PoissonScrollerGenerator {
       radius: 128. * 2.,
       sprites: (1..8).map(|i| format!("gems/{i}.png")).collect(),
-      rect: Vec2::new(500., window.height()),
       item_width: 128.,
       ..default()
     },
