@@ -1,7 +1,19 @@
-# bevy_scroller
+<div align="center">
 
-Bevy plugin to scroll things. It allow to write generators with custom logic for item generation
-You can also create parallaxes with it.
+# `bevy_scroller`
+
+A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things.
+
+[![crates.io](https://img.shields.io/crates/v/bevy_scroller)](https://crates.io/crates/bevy_scroller)
+[![crates.io](https://img.shields.io/crates/d/bevy_scroller)](https://crates.io/crates/bevy_scroller)
+[![docs.rs](https://docs.rs/bevy_scroller/badge.svg)](https://docs.rs/bevy_scroller)
+
+![parallax](assets/examples/parallax.gif)
+</div>
+
+## About
+
+It allow to write generators with custom logic for item generation. You can also create parallaxes with it.
 
 ## Features
 
