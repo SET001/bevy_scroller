@@ -1,7 +1,8 @@
 pub struct ScrollerPlugin;
 
 use crate::{
-  generator::generator, generators::poisson::poisson_generator, scroller::*, ScrollerGenerator,
+  generator::generator, generators::poisson::poisson_generator, poisson::PoissonScrollerGenerator,
+  scroller::*, ScrollerGenerator,
 };
 use bevy::prelude::*;
 
@@ -15,6 +16,7 @@ impl Plugin for ScrollerPlugin {
       .register_type::<ScrollerGenerator>()
       .register_type::<ScrollerSize>()
       .register_type::<ScrollerDirection>()
+      .register_type::<PoissonScrollerGenerator>()
       .register_type::<Vec<String>>()
       .register_type::<Vec<Entity>>()
       .add_systems(PreUpdate, init)
