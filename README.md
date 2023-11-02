@@ -13,7 +13,7 @@ A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things.
 
 ## About
 
-It allow to write generators with custom logic for item generation. You can also create parallaxes with it.
+Scroll predefined image sets, random images from sets, single image or even write own generators to generate scroller items (might be not images at all). You can also create parallaxes with it.
 
 ## Features
 
