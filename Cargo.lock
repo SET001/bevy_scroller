@@ -990,7 +990,7 @@ dependencies = [
 
 [[package]]
 name = "bevy_scroller"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "bevy",
  "bevy_editor_pls",

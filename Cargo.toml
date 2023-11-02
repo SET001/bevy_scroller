@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 name = "bevy_scroller"
 readme = "README.md"
 repository = "https://github.com/SET001/bevy_scroller"
-version = "0.1.1"
+version = "0.1.2"
 
 [dependencies]
 bevy = "0.11.3"
