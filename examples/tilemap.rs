@@ -9,9 +9,9 @@ use bevy_ecs_tilemap::{
   tiles::{TileBundle, TilePos, TileStorage, TileTextureIndex},
   TilemapBundle, TilemapPlugin,
 };
-use bevy_scroller::BitMask;
+
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerGenerator, ScrollerItem, ScrollerPlugin,
+  BitMask, Scroller, ScrollerDirection, ScrollerGenerator, ScrollerItem, ScrollerPlugin,
   ScrollerSize,
 };
 use rand::{thread_rng, Rng};
@@ -34,7 +34,20 @@ pub struct TilemapGenerator;
 
 const SCALE: f32 = 2.;
 
-pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
+#[derive(Resource)]
+struct TilemapLayers(Vec<Handle<Image>>);
+
+pub fn start(
+  mut commands: Commands,
+  windows: Query<&Window, With<PrimaryWindow>>,
+  asset_server: Res<AssetServer>,
+) {
+  commands.insert_resource(TilemapLayers(
+    ["tilemap/ocean.png", "tilemap/hills.png"]
+      .into_iter()
+      .map(|image_path| asset_server.load(image_path))
+      .collect(),
+  ));
   let window = windows.get_single().expect("no primary window");
   let viewport_width = 700_f32;
   let viewport_height = 192_f32;
@@ -68,12 +81,9 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
         ScrollerSize {
           size: Vec2::new(viewport_width, viewport_height),
         },
-        ScrollerBundle {
-          scroller: Scroller {
-            speed: 0.5,
-            direction: ScrollerDirection::Backward,
-            ..default()
-          },
+        Scroller {
+          speed: 0.5,
+          direction: ScrollerDirection::Backward,
           ..default()
         },
         Transform::from_xyz(0., 0., 100.),
@@ -82,48 +92,26 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
         ScrollerSize {
           size: Vec2::new(viewport_width, viewport_height),
         },
-        ScrollerBundle {
-          scroller: Scroller {
-            speed: 0.4,
-            direction: ScrollerDirection::Backward,
-            ..default()
-          },
+        Scroller {
+          speed: 0.3,
+          direction: ScrollerDirection::Backward,
           ..default()
         },
-        ScrollerGenerator::SpriteSingle("bg3.png".into()),
-        Transform::from_xyz(0., 0., 90.),
-      ));
-
-      parent.spawn((
-        ScrollerSize {
-          size: Vec2::new(viewport_width, viewport_height),
-        },
-        ScrollerBundle {
-          scroller: Scroller {
-            speed: 0.3,
-            direction: ScrollerDirection::Backward,
-            ..default()
-          },
-          ..default()
-        },
+        ScrollerGenerator::SpriteSingle("tilemap/hills.png".into()),
         Transform::from_xyz(0., 0., 80.),
-        ScrollerGenerator::SpriteSingle("bg2.png".into()),
       ));
 
       parent.spawn((
         ScrollerSize {
           size: Vec2::new(viewport_width, viewport_height),
         },
-        ScrollerBundle {
-          scroller: Scroller {
-            speed: 0.2,
-            direction: ScrollerDirection::Backward,
-            ..default()
-          },
+        Scroller {
+          speed: 0.2,
+          direction: ScrollerDirection::Backward,
           ..default()
         },
-        ScrollerGenerator::SpriteSingle("bg1.png".into()),
-        Transform::from_xyz(0., 0., 70.),
+        ScrollerGenerator::SpriteSingle("tilemap/ocean.png".into()),
+        Transform::from_xyz(0., 20., 70.),
       ));
     });
 }
@@ -134,7 +122,7 @@ pub fn tilemap_generator(
   asset_server: Res<AssetServer>,
 ) {
   let mut rng = thread_rng();
-  let texture_handle: Handle<Image> = asset_server.load("tileset.png");
+  let texture_handle: Handle<Image> = asset_server.load("tilemap/tileset.png");
   for (scroller_entity, scroller) in q_scroller.iter() {
     let map_size = TilemapSize {
       x: rng.gen_range(4..20),
