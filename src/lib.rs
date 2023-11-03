@@ -2,11 +2,13 @@
 
 // mod linear_sprite_spawner;
 // mod poisson_sprite_spawner;
+mod autotiler;
 mod generator;
 mod generators;
 mod plugin;
 mod scroller;
 
+pub use autotiler::*;
 pub use generator::*;
 pub use generators::*;
 pub use plugin::ScrollerPlugin;

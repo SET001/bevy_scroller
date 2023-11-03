@@ -68,8 +68,10 @@ spawn a scroller-entity with:
 | [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
 | [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. |
+| [tilemaps](examples/tilemap.rs) | ![tilemap](assets/examples/tilemap.gif) | Show how to use scrollers with tilemaps. It uses custom generator to generate scroller items with tilemaps based on [bevy_ecs_tilemap](https://github.com/StarArawn/bevy_ecs_tilemap) |
 
 ## Credits
 
 - [gems](https://opengameart.org/content/gems-set-01)
 - [parallax](https://ansimuz.itch.io/mountain-dusk-parallax-background)
+- [tilemap](https://aamatniekss.itch.io/free-pixelart-tileset-cute-forest)
