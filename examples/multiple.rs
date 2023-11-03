@@ -23,7 +23,7 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
   commands.spawn(Camera2dBundle::default());
 
   commands.spawn((
-    ScrollerGenerator::SpriteSingle("gems_001.png".into()),
+    ScrollerGenerator::SpriteSingle("gems/1.png".into()),
     ScrollerSize {
       size: Vec2::new(window.width(), sprite_size.y),
     },
@@ -38,7 +38,7 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
   ));
 
   commands.spawn((
-    ScrollerGenerator::SpriteSingle("gems_002.png".into()),
+    ScrollerGenerator::SpriteSingle("gems/2.png".into()),
     ScrollerSize {
       size: Vec2::new(window.width(), sprite_size.y),
     },
