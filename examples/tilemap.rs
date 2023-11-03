@@ -3,16 +3,16 @@ use std::collections::HashMap;
 use bevy::{prelude::*, render::camera::Viewport, window::PrimaryWindow};
 use bevy_ecs_tilemap::{
   prelude::{
-    get_tilemap_center_transform, TilemapGridSize, TilemapId, TilemapSize, TilemapTexture,
-    TilemapTileSize, TilemapType,
+    get_tilemap_center_transform, TilemapId, TilemapSize, TilemapTexture, TilemapTileSize,
+    TilemapType,
   },
   tiles::{TileBundle, TilePos, TileStorage, TileTextureIndex},
   TilemapBundle, TilemapPlugin,
 };
 use bevy_scroller::BitMask;
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerGenerator, ScrollerInitialized,
-  ScrollerItem, ScrollerPlugin, ScrollerSize,
+  Scroller, ScrollerBundle, ScrollerDirection, ScrollerGenerator, ScrollerItem, ScrollerPlugin,
+  ScrollerSize,
 };
 use rand::{thread_rng, Rng};
 fn main() {
@@ -34,11 +34,7 @@ pub struct TilemapGenerator;
 
 const SCALE: f32 = 2.;
 
-pub fn start(
-  mut commands: Commands,
-  windows: Query<&Window, With<PrimaryWindow>>,
-  asset_server: Res<AssetServer>,
-) {
+pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
   let window = windows.get_single().expect("no primary window");
   let viewport_width = 700_f32;
   let viewport_height = 192_f32;
@@ -134,25 +130,20 @@ pub fn start(
 
 pub fn tilemap_generator(
   mut commands: Commands,
-  q_scroller: Query<(Entity, &Scroller, &TilemapGenerator)>,
+  q_scroller: Query<(Entity, &Scroller), With<TilemapGenerator>>,
   asset_server: Res<AssetServer>,
 ) {
   let mut rng = thread_rng();
   let texture_handle: Handle<Image> = asset_server.load("tileset.png");
-  for (scroller_entity, scroller, generator) in q_scroller.iter() {
+  for (scroller_entity, scroller) in q_scroller.iter() {
     let map_size = TilemapSize {
       x: rng.gen_range(4..20),
       y: 12,
     };
 
-    // let map_size = TilemapSize { x: 20, y: 12 };
-
     if scroller.new_item_needed() {
       let tile_size = TilemapTileSize { x: 16.0, y: 16.0 };
-      let grid_size = TilemapGridSize {
-        x: tile_size.x,
-        y: tile_size.y,
-      };
+      let grid_size = tile_size.into();
       let map_type = TilemapType::default();
 
       commands
@@ -164,32 +155,20 @@ pub fn tilemap_generator(
             ),
             parent: scroller_entity,
           },
-          // Visibility::Hidden,
           SpatialBundle::default(),
         ))
-        .with_children(|parent: &mut ChildBuilder<'_, '_, '_>| {
+        .with_children(|parent| {
           let platform_height = rng.gen_range(1..map_size.y / 2);
-          // let platform_height = 10;
           if platform_height > 0 {
             let mut tile_storage = TileStorage::empty(map_size);
             let transform = get_tilemap_center_transform(&map_size, &grid_size, &map_type, 0.0);
-            // let tilemap_entity = parent.spawn_empty().id();
-            // SpriteBundle {
-            //   texture: texture_handle.clone(),
-            //   visibility: Visibility::Hidden,
-            //   ..Default::default()
-            // },
 
             let mut ground_map: HashMap<(u32, u32), bool> = HashMap::init(UVec2 {
               x: map_size.x,
               y: map_size.y,
             });
             let platform_offset = rng.gen_range(1..4);
-            let platform_length = map_size.x - platform_offset;
-            println!(
-              "platform_offset {platform_offset}, platform_length {platform_length}, map_size.x {}",
-              map_size.x
-            );
+
             for x in platform_offset..map_size.x {
               for y in (0..platform_height).rev() {
                 ground_map.insert((x, y), true);
@@ -221,12 +200,7 @@ pub fn tilemap_generator(
                 if *ground_map.get(&(x, y)).unwrap() {
                   let bitmask = ground_map.get_bitmask(UVec2 { x, y }).unwrap();
                   let tile_index = ground_tiles[bitmask as usize];
-                  // println!("tile_index {x}:{y}: {bitmask} {tile_index}");
-                  let tile_pos = TilePos {
-                    x,
-                    // y: map_size.y - 1 - y,
-                    y,
-                  };
+                  let tile_pos = TilePos { x, y };
                   let tile_entity = parent
                     .spawn(TileBundle {
                       position: tile_pos,
