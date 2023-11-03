@@ -212,34 +212,29 @@ pub fn scroller_debug(
   for (global_transfrorm, item, transform, visibility) in q_scroller_item.iter() {
     if let Some(visibility) = visibility {
       if visibility != Visibility::Hidden {
+        let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
+
         gizmos.rect_2d(
-          global_transfrorm.translation().truncate(),
-          global_transfrorm
-            .to_scale_rotation_translation()
-            .1
-            .to_axis_angle()
-            .1,
-          item.size,
+          translation.truncate(),
+          rotation.to_axis_angle().1,
+          item.size * scale.truncate(),
           Color::BLUE,
         );
       }
     }
   }
   for (global_transfrorm, scroller, scroller_size) in q_scroller.iter() {
-    // let position = global_transform.translation().clone().truncate();
+    let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
+
     gizmos.line_2d(
-      Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.),
-      Vec2::new(scroller.spawn_edge, scroller_size.size.y / 2. + 20.),
+      Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
+      Vec2::new(scroller.spawn_edge, scroller_size.size.y / 2. + 20.) * scale.truncate(), //  TODO: take rotation into account
       Color::RED,
     );
     gizmos.rect_2d(
-      global_transfrorm.translation().truncate(),
-      global_transfrorm
-        .to_scale_rotation_translation()
-        .1
-        .to_axis_angle()
-        .1,
-      Vec2::new(scroller_size.size.x, scroller_size.size.y),
+      translation.truncate(),
+      rotation.to_axis_angle().1,
+      Vec2::new(scroller_size.size.x, scroller_size.size.y) * scale.truncate(),
       Color::GREEN,
     );
     // gizmos.line_2d(
