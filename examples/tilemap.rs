@@ -11,10 +11,11 @@ use bevy_ecs_tilemap::{
 };
 
 use bevy_scroller::{
-  BitMask, Scroller, ScrollerDirection, ScrollerGenerator, ScrollerItem, ScrollerPlugin,
-  ScrollerSize,
+  Scroller, ScrollerDirection, ScrollerGenerator, ScrollerItem, ScrollerPlugin, ScrollerSize,
 };
 use rand::{thread_rng, Rng};
+use tile_bitmasking::BitMask;
+
 fn main() {
   let mut app = App::new();
   app
