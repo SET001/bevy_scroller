@@ -1009,6 +1009,7 @@ dependencies = [
  "fast_poisson",
  "rand",
  "rstest",
+ "tile_bitmasking",
 ]
 
 [[package]]
@@ -3797,6 +3798,15 @@ dependencies = [
  "flate2",
  "jpeg-decoder",
  "weezl",
+]
+
+[[package]]
+name = "tile_bitmasking"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b04444e7489d97f3e677da1ba0af3ac39722012be2ce4df36c304eb08541d9b9"
+dependencies = [
+ "glam",
 ]
 
 [[package]]
