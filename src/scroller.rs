@@ -200,16 +200,11 @@ pub fn on_items_added(
 
 #[cfg(feature = "dev")]
 pub fn scroller_debug(
-  q_scroller_item: Query<(
-    &GlobalTransform,
-    &ScrollerItem,
-    &Transform,
-    Option<&Visibility>,
-  )>,
+  q_scroller_item: Query<(&GlobalTransform, &ScrollerItem, Option<&Visibility>)>,
   q_scroller: Query<(&GlobalTransform, &Scroller, &ScrollerSize)>,
   mut gizmos: Gizmos,
 ) {
-  for (global_transfrorm, item, transform, visibility) in q_scroller_item.iter() {
+  for (global_transfrorm, item, visibility) in q_scroller_item.iter() {
     if let Some(visibility) = visibility {
       if visibility != Visibility::Hidden {
         let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
@@ -296,9 +291,9 @@ pub fn delete_items(
 
 #[cfg(test)]
 mod test {
-  use crate::{Scroller, ScrollerItem};
-  use bevy::prelude::*;
-  use rstest::rstest;
+  // use crate::{Scroller, ScrollerItem};
+  // use bevy::prelude::*;
+  // use rstest::rstest;
 
   // #[rstest]
   // #[case(0., 30., Vec2::new(-5.0, 0.))]
