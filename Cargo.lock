@@ -580,6 +580,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_ecs_tilemap"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b64cb7171c43b30e9fa75cd8748911e06139ff45a04fa4be881201079fee295"
+dependencies = [
+ "bevy",
+ "log",
+ "regex",
+]
+
+[[package]]
 name = "bevy_editor_pls"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -993,10 +1004,12 @@ name = "bevy_scroller"
 version = "0.1.4"
 dependencies = [
  "bevy",
+ "bevy_ecs_tilemap",
  "bevy_editor_pls",
  "fast_poisson",
  "rand",
  "rstest",
+ "tile_bitmasking",
 ]
 
 [[package]]
@@ -3785,6 +3798,15 @@ dependencies = [
  "flate2",
  "jpeg-decoder",
  "weezl",
+]
+
+[[package]]
+name = "tile_bitmasking"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b04444e7489d97f3e677da1ba0af3ac39722012be2ce4df36c304eb08541d9b9"
+dependencies = [
+ "glam",
 ]
 
 [[package]]
