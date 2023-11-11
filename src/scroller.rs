@@ -10,6 +10,8 @@ use bevy::{
   },
 };
 
+use crate::ScrollerGenerator;
+
 #[derive(Reflect, Default, Debug, Clone)]
 pub enum ScrollerDirection {
   #[default]
@@ -37,7 +39,7 @@ pub struct ScrollerItem {
   pub parent: Entity,
 }
 
-#[derive(Copy, Clone, Component, Reflect)]
+#[derive(Copy, Clone, Default, Component, Reflect)]
 pub struct ScrollerSize {
   pub size: Vec2,
 }
@@ -46,7 +48,6 @@ pub struct ScrollerSize {
 pub struct ScrollerInitialized;
 
 #[derive(Default, Debug, Component, Clone, Reflect)]
-#[reflect(Component)]
 pub struct Scroller {
   pub start: f32,
   pub end: f32,
@@ -59,6 +60,10 @@ pub struct Scroller {
 }
 
 impl Scroller {
+  pub fn get_free_space(&self) -> f32 {
+    (self.start - self.spawn_edge) * -self.direction.as_f32()
+  }
+
   pub fn new_item_needed(&self) -> bool {
     (self.start - self.spawn_edge) * self.direction.as_f32() < self.speed * 3.
   }
@@ -71,33 +76,89 @@ impl Scroller {
   }
 }
 
+#[derive(Component)]
+pub struct NeedInitialFilling;
 #[derive(Bundle)]
-pub struct ScrollerBundle {
-  pub name: Name,
+pub struct ScrollerBundle<G: ScrollerGenerator + Send + Sync + Component> {
   pub scroller: Scroller,
+  pub spatial: SpatialBundle,
+  pub generator: G,
 }
 
-impl Default for ScrollerBundle {
+impl<G: ScrollerGenerator + Send + Sync + Component> Default for ScrollerBundle<G> {
   fn default() -> Self {
     Self {
-      name: "Scroller".into(),
       scroller: Scroller::default(),
+      generator: G::default(),
+      spatial: SpatialBundle {
+        visibility: Visibility::Hidden,
+        ..default()
+      },
     }
+  }
+}
+
+pub struct UnnamedScrollerIndex(pub u32);
+impl Default for UnnamedScrollerIndex {
+  fn default() -> Self {
+    Self(1)
+  }
+}
+
+pub fn init_v2(
+  mut scroller_index: Local<UnnamedScrollerIndex>,
+  mut commands: Commands,
+  mut q_added_scroller: Query<
+    (Entity, &mut Scroller, &ScrollerSize, Option<&Name>),
+    Added<ScrollerSize>,
+  >,
+) {
+  for (entity, mut scroller, scroller_size, maybe_name) in q_added_scroller.iter_mut() {
+    let name = match maybe_name {
+      Some(name) => name.to_string(),
+      None => {
+        let name = format!("Scroller #{}", scroller_index.0);
+        commands.entity(entity).insert(Name::new(name.clone()));
+        scroller_index.0 += 1;
+        name
+      }
+    };
+    debug!("Init scroller: {name}");
+
+    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
+    scroller.start = -scroller.end;
+    scroller.spawn_edge = scroller.end;
+    commands.entity(entity).insert(NeedInitialFilling);
   }
 }
 
 pub fn init(
   mut commands: Commands,
   mut q_scroller: Query<
-    (Entity, &mut Scroller, &ScrollerSize, Option<&Transform>),
+    (
+      Entity,
+      &mut Scroller,
+      &ScrollerSize,
+      Option<&Transform>,
+      Option<&Name>,
+    ),
     Without<Visibility>,
   >,
   mut images: ResMut<Assets<Image>>,
+  mut scroller_index: Local<UnnamedScrollerIndex>,
 ) {
-  for (scroller_entity, mut scroller, scroller_size, maybe_transform) in q_scroller.iter_mut() {
+  for (scroller_entity, mut scroller, scroller_size, maybe_transform, maybe_name) in
+    q_scroller.iter_mut()
+  {
+    if maybe_name.is_none() {
+      let name = format!("Scroller #{}", scroller_index.0);
+      commands.entity(scroller_entity).insert(Name::new(name));
+      scroller_index.0 += 1;
+    }
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
     scroller.start = -scroller.end;
     scroller.spawn_edge = scroller.end;
+    commands.entity(scroller_entity).insert(NeedInitialFilling);
     let spatial = if let Some(transform) = maybe_transform {
       SpatialBundle::from_transform(*transform)
     } else {
@@ -156,18 +217,6 @@ pub fn init(
           Name::new("Scroller Camera texture"),
         ));
       });
-    }
-  }
-}
-
-pub fn wait_items(
-  mut q_scroller: Query<(Entity, &Scroller, &mut Visibility), Without<ScrollerInitialized>>,
-  mut commands: Commands,
-) {
-  for (entity, scroller, mut visibility) in q_scroller.iter_mut() {
-    if !scroller.new_item_needed() {
-      *visibility = Visibility::Inherited;
-      commands.entity(entity).insert(ScrollerInitialized);
     }
   }
 }
@@ -241,7 +290,13 @@ pub fn scroller_debug(
 }
 
 pub fn update(
-  mut q_scroller: Query<(&mut Scroller, Entity), With<ScrollerInitialized>>,
+  mut commands: Commands,
+  mut q_scroller: Query<(
+    &mut Scroller,
+    &mut Visibility,
+    Option<&NeedInitialFilling>,
+    Entity,
+  )>, // TODO , With<ScrollerInitialized> needed?
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
 ) {
   //   let step: f32 = 1. / 60.;
@@ -249,8 +304,15 @@ pub fn update(
 
   //   if delta > 0. {
   // println!("========= {}", q_item.iter().count());
-  for (mut scroller, scroller_entity) in q_scroller.iter_mut() {
-    if !scroller.new_item_needed() && !scroller.is_paused {
+  for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
+    if maybe_need_filling.is_some() {
+      println!("changing visibility");
+      *visibility = Visibility::Inherited;
+      commands
+        .entity(scroller_entity)
+        .remove::<NeedInitialFilling>();
+    }
+    if !scroller.is_paused {
       scroller.spawn_edge += scroller.speed * scroller.direction.as_f32();
       q_item
         .iter_mut()
@@ -274,7 +336,7 @@ pub fn update(
 pub fn delete_items(
   mut commands: Commands,
   q_scroller_item: Query<(&ScrollerItem, Entity, &Transform)>,
-  q_scroller: Query<&Scroller, With<ScrollerInitialized>>,
+  q_scroller: Query<&Scroller>,
 ) {
   for (scroller_item, entity, transform) in q_scroller_item.iter() {
     if let Ok(scroller) = q_scroller.get(scroller_item.parent) {

@@ -1,6 +1,6 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerGenerator, ScrollerPlugin, ScrollerSize,
+  Scroller, ScrollerBundle, ScrollerDirection, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
 };
 
 #[derive(Resource, Default)]
@@ -10,6 +10,11 @@ fn main() {
   app
     .add_plugins((DefaultPlugins, ScrollerPlugin))
     .add_systems(Startup, start);
+  #[cfg(feature = "dev")]
+  {
+    use bevy_editor_pls::EditorPlugin;
+    app.add_plugins(EditorPlugin::default());
+  }
   app.run();
 }
 
@@ -26,7 +31,6 @@ pub fn start(
   commands.spawn(Camera2dBundle::default());
 
   commands.spawn((
-    ScrollerGenerator::SpriteSingle(image_path.into()),
     ScrollerSize {
       size: Vec2::new(primary_window.width(), 300.),
     },
@@ -35,6 +39,10 @@ pub fn start(
         speed: 1.,
         direction: ScrollerDirection::Forward,
         ..default()
+      },
+      generator: SingleSpriteGenerator {
+        path: image_path.into(),
+        size: Vec2 { x: 300., y: 300. },
       },
       ..default()
     },

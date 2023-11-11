@@ -1,0 +1,10 @@
+[package]
+edition = "2021"
+name = "bevy_scroller_macros"
+version = "0.1.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "2.0.38"

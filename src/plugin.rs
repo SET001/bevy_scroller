@@ -1,8 +1,7 @@
 pub struct ScrollerPlugin;
 
 use crate::{
-  generator::generator, generators::poisson::poisson_generator, poisson::PoissonScrollerGenerator,
-  scroller::*, ScrollerGenerator,
+  scroller::*, sprite_spawner, ScrollerApp, SequenceSpriteGenerator, SingleSpriteGenerator,
 };
 use bevy::prelude::*;
 
@@ -13,22 +12,24 @@ impl Plugin for ScrollerPlugin {
   fn build(&self, app: &mut App) {
     app
       .register_type::<Scroller>()
-      .register_type::<ScrollerGenerator>()
+      // .register_type::<ScrollerGenerator>()
       .register_type::<ScrollerSize>()
       .register_type::<ScrollerDirection>()
-      .register_type::<PoissonScrollerGenerator>()
+      // .register_type::<PoissonScrollerGenerator>()
+      .register_type::<SequenceSpriteGenerator>()
       .register_type::<Vec<String>>()
       .register_type::<Vec<Entity>>()
-      .add_systems(PreUpdate, init)
+      .add_scroller_generator::<SingleSpriteGenerator, _, _>(sprite_spawner)
+      .add_scroller_generator::<SequenceSpriteGenerator, _, _>(sprite_spawner)
+      .add_systems(PreUpdate, (init_v2, on_items_added).chain())
       .add_systems(
         Update,
         (
           update,
           #[cfg(feature = "dev")]
           scroller_debug,
-          (generator, poisson_generator, apply_deferred, on_items_added).chain(),
         ),
       )
-      .add_systems(PostUpdate, (wait_items, delete_items));
+      .add_systems(PostUpdate, delete_items);
   }
 }
