@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::{seq::SliceRandom, thread_rng};
 use std::collections::VecDeque;
 
 use crate::{Scroller, ScrollerGenerator, ScrollerItem};
@@ -49,16 +50,19 @@ impl ScrollerGenerator for SequenceSpriteGenerator {
   }
 }
 
-// #[derive(Component, Default)]
-// pub struct ScrollerRandomSequenceSpriteGenerator {
-//   sprites: Vec<(String, f32)>,
-// }
-// impl ScrollerGenerator for ScrollerRandomSequenceSpriteGenerator {
-//   fn gen_item(&self) -> f32 {
-//     // self.sprites.front().unwrap().1
-//     1.
-//   }
-// }
+#[derive(Component, Default, Reflect, Clone)]
+pub struct RandomSequenceSpriteGenerator {
+  pub items: Vec<SpriteScrollerItem>,
+}
+
+impl ScrollerGenerator for RandomSequenceSpriteGenerator {
+  type I = SpriteScrollerItem;
+
+  fn gen_item(&mut self) -> Self::I {
+    let mut rng = thread_rng();
+    self.items.choose(&mut rng).unwrap().clone()
+  }
+}
 
 pub fn sprite_spawner(
   In(input): In<Vec<(Entity, Scroller, Box<SpriteScrollerItem>)>>,

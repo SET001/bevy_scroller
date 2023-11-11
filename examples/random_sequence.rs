@@ -1,5 +1,8 @@
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{Scroller, ScrollerBundle, ScrollerGenerator, ScrollerPlugin, ScrollerSize};
+use bevy_scroller::{
+  RandomSequenceSpriteGenerator, Scroller, ScrollerBundle, ScrollerGenerator, ScrollerPlugin,
+  ScrollerSize, SpriteScrollerItem,
+};
 
 #[derive(Resource)]
 pub struct ScrollerImages(Vec<Handle<Image>>);
@@ -19,17 +22,18 @@ pub fn start(
   commands.spawn(Camera2dBundle::default());
   let primary_window = windows.get_single().expect("no primary window");
 
-  let images = (1..=7)
-    .map(|i| format!("gems/{i}.png"))
-    .collect::<Vec<String>>();
-  let images_handles = images
-    .iter()
-    .map(|image_path| asset_server.load(image_path))
-    .collect::<Vec<Handle<Image>>>();
-  commands.insert_resource(ScrollerImages(images_handles));
+  let items = (1..=7)
+    .map(|i| {
+      let path = format!("gems/{i}.png");
+      let _: Handle<Image> = asset_server.load(path.clone());
+      SpriteScrollerItem {
+        path,
+        size: Vec2 { x: 128., y: 128. },
+      }
+    })
+    .collect::<Vec<SpriteScrollerItem>>();
 
   commands.spawn((
-    ScrollerGenerator::SpriteRandomSequence(images),
     ScrollerSize {
       size: Vec2::new(primary_window.width(), 128.),
     },
@@ -38,6 +42,7 @@ pub fn start(
         speed: 1.,
         ..default()
       },
+      generator: RandomSequenceSpriteGenerator { items },
       ..default()
     },
   ));
