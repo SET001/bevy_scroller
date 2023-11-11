@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  RandomSequenceSpriteGenerator, Scroller, ScrollerBundle, ScrollerGenerator, ScrollerPlugin,
-  ScrollerSize, SpriteScrollerItem,
+  RandomSequenceSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
+  SpriteScrollerItem,
 };
 
 #[derive(Resource)]
