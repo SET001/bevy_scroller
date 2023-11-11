@@ -253,10 +253,10 @@ pub fn scroller_debug(
   q_scroller: Query<(&GlobalTransform, &Scroller, &ScrollerSize)>,
   mut gizmos: Gizmos,
 ) {
-  for (global_transfrorm, item, visibility) in q_scroller_item.iter() {
+  for (global_transform, item, visibility) in q_scroller_item.iter() {
     if let Some(visibility) = visibility {
       if visibility != Visibility::Hidden {
-        let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
+        let (scale, rotation, translation) = global_transform.to_scale_rotation_translation();
 
         gizmos.rect_2d(
           translation.truncate(),
