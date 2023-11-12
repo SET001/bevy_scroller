@@ -1,8 +1,8 @@
 pub struct ScrollerPlugin;
 
 use crate::{
-  scroller::*, sprite_spawner, RandomSequenceSpriteGenerator, ScrollerApp, SequenceSpriteGenerator,
-  SingleSpriteGenerator,
+  poisson_generator, scroller::*, sprite_spawner, PoissonSpriteGenerator,
+  RandomSequenceSpriteGenerator, ScrollerApp, SequenceSpriteGenerator, SingleSpriteGenerator,
 };
 use bevy::prelude::*;
 
@@ -23,6 +23,7 @@ impl Plugin for ScrollerPlugin {
       .add_scroller_generator::<SingleSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<SequenceSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<RandomSequenceSpriteGenerator, _, _>(sprite_spawner)
+      .add_scroller_generator::<PoissonSpriteGenerator, _, _>(poisson_generator)
       .add_systems(PreUpdate, (init).chain())
       .add_systems(
         Update,
