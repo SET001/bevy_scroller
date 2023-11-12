@@ -105,13 +105,14 @@ impl Default for UnnamedScrollerIndex {
   }
 }
 
-pub fn init_v2(
+pub fn init(
   mut scroller_index: Local<UnnamedScrollerIndex>,
   mut commands: Commands,
   mut q_added_scroller: Query<
     (Entity, &mut Scroller, &ScrollerSize, Option<&Name>),
     Added<ScrollerSize>,
   >,
+  mut images: ResMut<Assets<Image>>,
 ) {
   for (entity, mut scroller, scroller_size, maybe_name) in q_added_scroller.iter_mut() {
     let name = match maybe_name {
@@ -129,42 +130,7 @@ pub fn init_v2(
     scroller.start = -scroller.end;
     scroller.spawn_edge = scroller.end;
     commands.entity(entity).insert(NeedInitialFilling);
-  }
-}
 
-pub fn init(
-  mut commands: Commands,
-  mut q_scroller: Query<
-    (
-      Entity,
-      &mut Scroller,
-      &ScrollerSize,
-      Option<&Transform>,
-      Option<&Name>,
-    ),
-    Without<Visibility>,
-  >,
-  mut images: ResMut<Assets<Image>>,
-  mut scroller_index: Local<UnnamedScrollerIndex>,
-) {
-  for (scroller_entity, mut scroller, scroller_size, maybe_transform, maybe_name) in
-    q_scroller.iter_mut()
-  {
-    if maybe_name.is_none() {
-      let name = format!("Scroller #{}", scroller_index.0);
-      commands.entity(scroller_entity).insert(Name::new(name));
-      scroller_index.0 += 1;
-    }
-    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
-    scroller.start = -scroller.end;
-    scroller.spawn_edge = scroller.end;
-    commands.entity(scroller_entity).insert(NeedInitialFilling);
-    let spatial = if let Some(transform) = maybe_transform {
-      SpatialBundle::from_transform(*transform)
-    } else {
-      SpatialBundle::default()
-    };
-    commands.entity(scroller_entity).insert(spatial);
     if let Some(render_layer) = scroller.render_layer {
       let size = Extent3d {
         width: scroller_size.size.x as u32,
@@ -192,7 +158,7 @@ pub fn init(
       let image_handle = images.add(image); //  TODO: remove it on cleanup
       scroller.texture_handle = image_handle.clone();
 
-      commands.entity(scroller_entity).with_children(|parent| {
+      commands.entity(entity).with_children(|parent| {
         parent.spawn((
           Camera2dBundle {
             camera: Camera {
