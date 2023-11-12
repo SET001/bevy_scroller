@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerGenerator, ScrollerPlugin, ScrollerSize,
+  Scroller, ScrollerBundle, ScrollerDirection, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
 };
 
 #[derive(Resource)]
@@ -46,13 +46,17 @@ fn start(
     texture: asset_server.load(images.get(0).unwrap()),
     ..default()
   });
-  (1..=5).for_each(|i| {
-    let image_handle = images
-      .get(i)
-      .expect(&format!("no image with index {i}"))
-      .into();
+  let sizes = [
+    Vec2::new(320., 240.),
+    Vec2::new(128., 240.),
+    Vec2::new(144., 240.),
+    Vec2::new(160., 240.),
+    Vec2::new(320., 240.),
+    Vec2::new(240., 240.),
+  ];
+
+  sizes.into_iter().enumerate().for_each(|(i, size)| {
     commands.spawn((
-      ScrollerGenerator::SpriteSingle(image_handle),
       ScrollerSize {
         size: Vec2::new(primary_window.width(), item_height),
       },
@@ -60,11 +64,20 @@ fn start(
         scroller: Scroller {
           speed: scroller_speed_min + i as f32 * scroller_speed_step,
           direction: direction.clone(),
+          render_layer: Some(1),
           ..default()
         },
+        generator: SingleSpriteGenerator {
+          path: format!("parallax/{i}.png"),
+          size,
+        },
+        spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
+          0.,
+          0.,
+          1. + i as f32,
+        ))),
         ..default()
       },
-      Transform::from_translation(Vec3::new(0., 0., 1. + i as f32)),
     ));
   });
 }
