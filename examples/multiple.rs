@@ -1,7 +1,9 @@
 use std::f32::consts::PI;
 
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{Scroller, ScrollerBundle, ScrollerGenerator, ScrollerPlugin, ScrollerSize};
+use bevy_scroller::{
+  Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
+};
 
 fn main() {
   let mut app = App::new();
@@ -23,7 +25,6 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
   commands.spawn(Camera2dBundle::default());
 
   commands.spawn((
-    ScrollerGenerator::SpriteSingle("gems/1.png".into()),
     ScrollerSize {
       size: Vec2::new(window.width(), sprite_size.y),
     },
@@ -32,13 +33,20 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
         speed: 0.5,
         ..default()
       },
+      generator: SingleSpriteGenerator {
+        path: "gems/1.png".into(),
+        size: sprite_size,
+      },
+      spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
+        0.,
+        (sprite_size.y - window.height()) / 2.,
+        0.,
+      ))),
       ..default()
     },
-    Transform::from_translation(Vec3::new(0., (sprite_size.y - window.height()) / 2., 0.)),
   ));
 
   commands.spawn((
-    ScrollerGenerator::SpriteSingle("gems/2.png".into()),
     ScrollerSize {
       size: Vec2::new(window.width(), sprite_size.y),
     },
@@ -47,11 +55,15 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
         speed: 0.5,
         ..default()
       },
-      ..default()
-    },
-    Transform {
-      translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 0.),
-      rotation: Quat::from_rotation_z(PI),
+      generator: SingleSpriteGenerator {
+        path: "gems/2.png".into(),
+        size: sprite_size,
+      },
+      spatial: SpatialBundle::from_transform(Transform {
+        translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 0.),
+        rotation: Quat::from_rotation_z(PI),
+        ..default()
+      }),
       ..default()
     },
   ));

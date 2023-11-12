@@ -1,11 +1,6 @@
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{
-  RandomSequenceSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
-  SpriteScrollerItem,
-};
+use bevy_scroller::*;
 
-#[derive(Resource)]
-pub struct ScrollerImages(Vec<Handle<Image>>);
 fn main() {
   let mut app = App::new();
   app

@@ -23,7 +23,7 @@ impl Plugin for ScrollerPlugin {
       .add_scroller_generator::<SingleSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<SequenceSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<RandomSequenceSpriteGenerator, _, _>(sprite_spawner)
-      .add_systems(PreUpdate, (init_v2).chain())
+      .add_systems(PreUpdate, (init).chain())
       .add_systems(
         Update,
         (
