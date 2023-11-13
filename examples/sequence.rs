@@ -5,10 +5,7 @@ use bevy::{
   prelude::*,
   window::PrimaryWindow,
 };
-use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize, SequenceSpriteGenerator,
-  SpriteScrollerItem,
-};
+use bevy_scroller::*;
 
 #[derive(Resource)]
 pub struct ScrollerImages(Handle<LoadedFolder>);

@@ -62,7 +62,7 @@ spawn a scroller-entity with:
 | example| preview | description |
 |----|-----|---------------|
 | [single](examples/parallax.rs) | | shows a basic usage |
-| [sequence](examples/sequence.rs) | | shows a usage of sequence generator |
+| [sequence](examples/sequence.rs) | | shows a usage of sequence generator. It also shows how to wait while all assets are loaded and retrieve sprite size |
 | [random_sequence](examples/random_sequence.rs) | | shows random sequence generator |
 | [multiple](examples/multiple.rs) | | example of muptiple scrollers |
 | [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
