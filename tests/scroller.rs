@@ -155,7 +155,7 @@ mod pre_generator {
   }
 
   #[test]
-  #[should_panic]
+  #[should_panic = "Reached item generation limit"]
   fn should_panic_when_reaching_generation_limit() {
     let mut app = get_app();
     fn generator(_: In<SpawnerInput<FooGenerator>>) {}
