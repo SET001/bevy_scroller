@@ -1,6 +1,6 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  poisson::PoissonScrollerGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
+  PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
 };
 
 fn main() {
@@ -22,20 +22,19 @@ fn start(mut commands: Commands, primary_window: Query<&Window, With<PrimaryWind
   commands.spawn(Camera2dBundle::default());
 
   commands.spawn((
-    PoissonScrollerGenerator {
-      radius: 128. * 2.,
-      sprites: (1..8).map(|i| format!("gems/{i}.png")).collect(),
-      item_width: 128.,
-      ..default()
-    },
     ScrollerSize {
       size: Vec2::new(window.width(), window.height()),
     },
     ScrollerBundle {
-      name: Name::new("space rocks scroller"),
       scroller: Scroller {
-        speed: 5.0,
+        speed: 5.,
         ..Default::default()
+      },
+      generator: PoissonSpriteGenerator {
+        radius: 128. * 2.,
+        sprites: (1..8).map(|i| format!("gems/{i}.png")).collect(),
+        item_size: Vec2::new(window.width(), window.height()),
+        sub_item_size: Vec2::splat(128.),
       },
       ..default()
     },

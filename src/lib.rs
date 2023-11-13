@@ -1,13 +1,11 @@
 #![allow(clippy::type_complexity)]
 
-mod generator;
 mod generators;
 mod plugin;
 mod scroller;
+mod scroller_app;
 
-pub use generator::*;
 pub use generators::*;
 pub use plugin::ScrollerPlugin;
-pub use scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerInitialized, ScrollerItem, ScrollerSize,
-};
+pub use scroller::*;
+pub use scroller_app::*;

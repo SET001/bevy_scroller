@@ -1,38 +1,74 @@
 use std::collections::VecDeque;
 
-use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{Scroller, ScrollerBundle, ScrollerGenerator, ScrollerPlugin, ScrollerSize};
+use bevy::{
+  asset::{LoadState, LoadedFolder},
+  prelude::*,
+  window::PrimaryWindow,
+};
+use bevy_scroller::*;
 
 #[derive(Resource)]
-pub struct ScrollerImages(Vec<Handle<Image>>);
+pub struct ScrollerImages(Handle<LoadedFolder>);
 
+#[derive(States, Default, Debug, Hash, Eq, PartialEq, Clone)]
+pub enum AppStates {
+  #[default]
+  Load,
+  Run,
+}
 fn main() {
   let mut app = App::new();
   app
     .add_plugins((DefaultPlugins, ScrollerPlugin))
-    .add_systems(Startup, start);
+    .add_systems(Startup, startup)
+    .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
+    .add_systems(OnEnter(AppStates::Run), run)
+    .add_state::<AppStates>();
+  #[cfg(feature = "dev")]
+  {
+    use bevy_editor_pls::EditorPlugin;
+    app.add_plugins(EditorPlugin::default());
+  }
   app.run();
 }
 
-pub fn start(
-  mut commands: Commands,
-  asset_server: Res<AssetServer>,
-  windows: Query<&Window, With<PrimaryWindow>>,
-) {
-  let primary_window = windows.get_single().expect("no primary window");
-
+pub fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
   commands.spawn(Camera2dBundle::default());
-  let images = (1..=7)
-    .map(|i| format!("gems/{i}.png"))
-    .collect::<VecDeque<String>>();
-  let images_handles = images
-    .iter()
-    .map(|image_path| asset_server.load(image_path))
-    .collect::<Vec<Handle<Image>>>();
-  commands.insert_resource(ScrollerImages(images_handles));
+  commands.insert_resource(ScrollerImages(asset_server.load_folder("gems")));
+}
 
+pub fn wait_for_load(
+  scroller_images: Res<ScrollerImages>,
+  asset_server: Res<AssetServer>,
+  mut next_state: ResMut<NextState<AppStates>>,
+) {
+  if let Some(state) = asset_server.get_load_state(&scroller_images.0) {
+    if state == LoadState::Loaded {
+      *next_state = NextState(Some(AppStates::Run));
+    }
+  }
+}
+
+pub fn run(
+  mut commands: Commands,
+  windows: Query<&Window, With<PrimaryWindow>>,
+  asset_server: Res<AssetServer>,
+  images: Res<Assets<Image>>,
+) {
+  let items = (1..=7)
+    .map(|i| {
+      let path = format!("gems/{i}.png");
+      let handle = asset_server.get_handle(path.clone()).unwrap();
+      let image = images.get(handle).unwrap();
+      SpriteScrollerItem {
+        path,
+        size: image.size().as_vec2(),
+      }
+    })
+    .collect::<VecDeque<SpriteScrollerItem>>();
+
+  let primary_window = windows.get_single().expect("no primary window");
   commands.spawn((
-    ScrollerGenerator::SpriteSequence(images),
     ScrollerSize {
       size: Vec2::new(primary_window.width(), 128.),
     },
@@ -41,6 +77,7 @@ pub fn start(
         speed: 1.,
         ..default()
       },
+      generator: SequenceSpriteGenerator { items },
       ..default()
     },
   ));
