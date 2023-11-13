@@ -24,7 +24,7 @@ impl Plugin for ScrollerPlugin {
       .add_scroller_generator::<SequenceSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<RandomSequenceSpriteGenerator, _, _>(sprite_spawner)
       .add_scroller_generator::<PoissonSpriteGenerator, _, _>(poisson_generator)
-      .add_systems(PreUpdate, (init).chain())
+      .add_systems(PreUpdate, (init, on_items_added).chain())
       .add_systems(
         Update,
         (
@@ -33,6 +33,6 @@ impl Plugin for ScrollerPlugin {
           scroller_debug,
         ),
       )
-      .add_systems(PostUpdate, (delete_items, on_items_added));
+      .add_systems(PostUpdate, delete_items);
   }
 }

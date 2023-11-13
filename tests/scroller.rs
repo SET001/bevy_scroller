@@ -9,7 +9,7 @@ struct FooGenerator;
 struct FooItem;
 impl GeneratedItem for FooItem {
   fn size(&self) -> Vec2 {
-    Vec2::default()
+    Vec2::new(100., 100.)
   }
 }
 impl ScrollerGenerator for FooGenerator {
@@ -22,7 +22,12 @@ impl ScrollerGenerator for FooGenerator {
 
 fn get_app() -> App {
   let mut app = App::new();
-  app.add_plugins((MinimalPlugins, ScrollerPlugin));
+  app.add_plugins((
+    MinimalPlugins,
+    ScrollerPlugin,
+    AssetPlugin::default(),
+    ImagePlugin::default(),
+  ));
   app
 }
 
@@ -44,6 +49,7 @@ fn get_app_with_full_scroller() -> App {
       size: Vec2::new(2000., 100.),
     },
     Transform::default(),
+    Visibility::Hidden,
   ));
   app
 }
