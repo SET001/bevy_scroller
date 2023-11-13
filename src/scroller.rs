@@ -44,9 +44,6 @@ pub struct ScrollerSize {
   pub size: Vec2,
 }
 
-#[derive(Component)]
-pub struct ScrollerInitialized;
-
 #[derive(Default, Debug, Component, Clone, Reflect)]
 pub struct Scroller {
   pub start: f32,
