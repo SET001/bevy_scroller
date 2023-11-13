@@ -73,7 +73,7 @@ impl Scroller {
   }
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct NeedInitialFilling;
 #[derive(Bundle)]
 pub struct ScrollerBundle<G: ScrollerGenerator + Send + Sync + Component> {
@@ -268,7 +268,7 @@ pub fn update(
   //   if delta > 0. {
   // println!("========= {}", q_item.iter().count());
   for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
-    if maybe_need_filling.is_some() {
+    if maybe_need_filling.is_some() && scroller.new_item_needed() {
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)

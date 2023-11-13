@@ -31,7 +31,7 @@ fn get_app() -> App {
   app
 }
 
-fn get_app_with_full_scroller() -> App {
+fn get_app_with_empty_scroller() -> (App, Entity) {
   let mut app = get_app();
   let scroller = app
     .world
@@ -42,6 +42,11 @@ fn get_app_with_full_scroller() -> App {
       },
     ))
     .id();
+  (app, scroller)
+}
+
+fn get_app_with_full_scroller() -> App {
+  let (mut app, scroller) = get_app_with_empty_scroller();
 
   app.world.spawn((
     ScrollerItem {
@@ -158,9 +163,9 @@ mod pre_generator {
 
 mod update {
   use bevy::prelude::*;
-  use bevy_scroller::Scroller;
+  use bevy_scroller::{NeedInitialFilling, Scroller};
 
-  use crate::get_app_with_full_scroller;
+  use crate::{get_app_with_empty_scroller, get_app_with_full_scroller};
 
   // #[test]
   // fn should_not_update() {}
@@ -202,6 +207,32 @@ mod update {
       .unwrap();
 
     assert_eq!(visibility, Visibility::Hidden);
+  }
+
+  #[test]
+  fn should_remove_init_marker_component_if_filled() {
+    let mut app = get_app_with_full_scroller();
+    app.update();
+
+    let marker = app
+      .world
+      .query_filtered::<&NeedInitialFilling, With<Scroller>>()
+      .get_single(&app.world);
+
+    assert!(marker.is_err());
+  }
+
+  #[test]
+  fn should_not_remove_init_marker_component_if_not_filled() {
+    let (mut app, _) = get_app_with_empty_scroller();
+    app.update();
+
+    let marker = app
+      .world
+      .query_filtered::<&NeedInitialFilling, With<Scroller>>()
+      .get_single(&app.world);
+
+    assert!(marker.is_ok());
   }
 
   #[test]
