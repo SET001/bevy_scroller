@@ -1031,17 +1031,9 @@ version = "0.2.0"
 dependencies = [
  "bevy",
  "bevy_editor_pls",
- "bevy_scroller_macros",
  "fast_poisson",
  "rand",
  "rstest",
-]
-
-[[package]]
-name = "bevy_scroller_macros"
-version = "0.1.0"
-dependencies = [
- "syn 2.0.38",
 ]
 
 [[package]]
