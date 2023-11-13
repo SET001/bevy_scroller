@@ -62,7 +62,7 @@ impl Scroller {
   }
 
   pub fn new_item_needed(&self) -> bool {
-    (self.start - self.spawn_edge) * self.direction.as_f32() < self.speed * 3.
+    self.get_free_space() < self.speed * 3.
   }
 
   pub fn get_next_item_position(&self, item: &ScrollerItem) -> Vec2 {
