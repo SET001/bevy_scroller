@@ -13,10 +13,9 @@ impl Plugin for ScrollerPlugin {
   fn build(&self, app: &mut App) {
     app
       .register_type::<Scroller>()
-      // .register_type::<ScrollerGenerator>()
       .register_type::<ScrollerSize>()
       .register_type::<ScrollerDirection>()
-      // .register_type::<PoissonScrollerGenerator>()
+      .register_type::<PoissonSpriteGenerator>()
       .register_type::<SequenceSpriteGenerator>()
       .register_type::<Vec<String>>()
       .register_type::<Vec<Entity>>()
