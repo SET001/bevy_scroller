@@ -13,8 +13,6 @@ A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things and c
 
 ## About
 
-A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things.
-
 The idea is simple - you define an area for the scroller and select an item generator that will be responsible for generating items. Scroller will fill the area with items from this generator, update its position, track which items moved out of the area and need to be destroyed, and track when new items need to be generated. This plugin makes no assumptions as to what actually will be a scroller item. There are few predefined generators that implements common strategies to gerenerate sprites as scroller items. You can also [implement your own generators](#custom-generators) to scroll whatever you want ([tilemaps](#example_tilemap), animations, complex entity hierarchies, etc.).
 
 By creating mutliple scrollers with different z-index, sprite and speed, you can easily create parallaxes ([example](#example_parallax)).
