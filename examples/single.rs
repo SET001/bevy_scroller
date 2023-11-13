@@ -1,10 +1,8 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerDirection, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
+  Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
 };
 
-#[derive(Resource, Default)]
-pub struct ScrollerImage(Handle<Image>);
 fn main() {
   let mut app = App::new();
   app
@@ -18,15 +16,8 @@ fn main() {
   app.run();
 }
 
-pub fn start(
-  mut commands: Commands,
-  asset_server: Res<AssetServer>,
-  windows: Query<&Window, With<PrimaryWindow>>,
-) {
+pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
   let primary_window = windows.get_single().expect("no primary window");
-
-  let image_path = "bevy_logo.png";
-  commands.insert_resource(ScrollerImage(asset_server.load(image_path)));
 
   commands.spawn(Camera2dBundle::default());
 
@@ -37,11 +28,11 @@ pub fn start(
     ScrollerBundle {
       scroller: Scroller {
         speed: 1.,
-        direction: ScrollerDirection::Forward,
+        render_layer: Some(1),
         ..default()
       },
       generator: SingleSpriteGenerator {
-        path: image_path.into(),
+        path: "bevy_logo.png".into(),
         size: Vec2 { x: 300., y: 300. },
       },
       ..default()
