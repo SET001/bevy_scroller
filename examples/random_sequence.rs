@@ -9,22 +9,14 @@ fn main() {
   app.run();
 }
 
-pub fn start(
-  mut commands: Commands,
-  asset_server: Res<AssetServer>,
-  windows: Query<&Window, With<PrimaryWindow>>,
-) {
+pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
   commands.spawn(Camera2dBundle::default());
   let primary_window = windows.get_single().expect("no primary window");
 
   let items = (1..=7)
-    .map(|i| {
-      let path = format!("gems/{i}.png");
-      let _: Handle<Image> = asset_server.load(path.clone());
-      SpriteScrollerItem {
-        path,
-        size: Vec2 { x: 128., y: 128. },
-      }
+    .map(|i| SpriteScrollerItem {
+      path: format!("gems/{i}.png"),
+      size: Vec2 { x: 128., y: 128. },
     })
     .collect::<Vec<SpriteScrollerItem>>();
 
@@ -35,6 +27,7 @@ pub fn start(
     ScrollerBundle {
       scroller: Scroller {
         speed: 1.,
+        render_layer: Some(1),
         ..default()
       },
       generator: RandomSequenceSpriteGenerator { items },
