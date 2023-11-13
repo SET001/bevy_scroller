@@ -270,7 +270,6 @@ pub fn update(
   // println!("========= {}", q_item.iter().count());
   for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
     if maybe_need_filling.is_some() && !scroller.new_item_needed() {
-      println!("update visibility");
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)

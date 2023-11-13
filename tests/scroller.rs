@@ -120,7 +120,7 @@ mod init {
 }
 
 mod pre_generator {
-  use crate::{get_app, get_app_with_full_scroller, FooGenerator};
+  use crate::{get_app, get_app_with_empty_scroller, get_app_with_full_scroller, FooGenerator};
   use bevy::prelude::*;
   use bevy_scroller::{ScrollerApp, ScrollerBundle, ScrollerSize, SpawnerInput};
 
@@ -149,13 +149,23 @@ mod pre_generator {
     fn generator(In(input): In<SpawnerInput<FooGenerator>>) {
       assert_eq!(input.len(), 10);
     }
+    let (mut app, _) = get_app_with_empty_scroller();
+    app.add_scroller_generator::<FooGenerator, _, _>(generator);
+    app.update();
+  }
+
+  #[test]
+  #[should_panic]
+  fn should_panic_when_reaching_generation_limit() {
     let mut app = get_app();
+    fn generator(_: In<SpawnerInput<FooGenerator>>) {}
     app.world.spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize {
-        size: Vec2::new(1000., 100.),
+        size: Vec2::new(100000., 100.),
       },
     ));
+
     app.add_scroller_generator::<FooGenerator, _, _>(generator);
     app.update();
   }
