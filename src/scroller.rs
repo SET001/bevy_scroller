@@ -259,7 +259,7 @@ pub fn update(
     &mut Visibility,
     Option<&NeedInitialFilling>,
     Entity,
-  )>, // TODO , With<ScrollerInitialized> needed?
+  )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
 ) {
   //   let step: f32 = 1. / 60.;
