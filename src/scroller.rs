@@ -122,7 +122,6 @@ pub fn init(
       }
     };
     debug!("Init scroller: {name}");
-    println!("Init scroller: {name}");
 
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
     scroller.start = -scroller.end;
