@@ -18,12 +18,13 @@ fn main() {
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
   let primary_window = windows.get_single().expect("no primary window");
+  let sprite_size = Vec2::new(300., 300.);
 
   commands.spawn(Camera2dBundle::default());
 
   commands.spawn((
     ScrollerSize {
-      size: Vec2::new(primary_window.width(), 300.),
+      size: Vec2::new(primary_window.width(), sprite_size.y),
     },
     ScrollerBundle {
       scroller: Scroller {
@@ -33,7 +34,7 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
       },
       generator: SingleSpriteGenerator {
         path: "bevy_logo.png".into(),
-        size: Vec2 { x: 300., y: 300. },
+        size: sprite_size,
       },
       ..default()
     },
