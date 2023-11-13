@@ -62,7 +62,7 @@ impl Scroller {
   }
 
   pub fn new_item_needed(&self) -> bool {
-    self.get_free_space() < self.speed * 3.
+    self.get_free_space() > self.speed * 3.
   }
 
   pub fn get_next_item_position(&self, item: &ScrollerItem) -> Vec2 {
@@ -122,6 +122,7 @@ pub fn init(
       }
     };
     debug!("Init scroller: {name}");
+    println!("Init scroller: {name}");
 
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
     scroller.start = -scroller.end;
@@ -268,7 +269,8 @@ pub fn update(
   //   if delta > 0. {
   // println!("========= {}", q_item.iter().count());
   for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
-    if maybe_need_filling.is_some() && scroller.new_item_needed() {
+    if maybe_need_filling.is_some() && !scroller.new_item_needed() {
+      println!("update visibility");
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)
