@@ -12,12 +12,11 @@ pub trait ScrollerGenerator: Default {
   fn gen_item(&mut self) -> Self::I;
 }
 
-// pub type PreGeneratorOutput<T: ScrollerGenerator> = Vec<(Entity, Scroller, T::I)>;
-// pub type GeneratorInput<T> = In<PreGeneratorOutput<T>>;
+pub type SpawnerInput<T> = Vec<(Entity, Scroller, Box<<T as ScrollerGenerator>::I>)>;
 
 pub fn pre_generator<T>(
   mut q_pending_scroller: Query<(Entity, &Scroller, &mut T)>,
-) -> Vec<(Entity, Scroller, Box<T::I>)>
+) -> SpawnerInput<T>
 where
   T: ScrollerGenerator + Component + Clone,
 {

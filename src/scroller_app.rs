@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{pre_generator, Scroller, ScrollerGenerator};
+use crate::{pre_generator, ScrollerGenerator, SpawnerInput};
 
 pub trait ScrollerApp {
   fn add_scroller_generator<
     T: ScrollerGenerator + Component + Clone,
     M,
-    S: IntoSystem<Vec<(Entity, Scroller, Box<T::I>)>, (), M>,
+    S: IntoSystem<SpawnerInput<T>, (), M>,
   >(
     &mut self,
     system: S,
@@ -17,7 +17,7 @@ impl ScrollerApp for App {
   fn add_scroller_generator<
     T: ScrollerGenerator + Component + Clone,
     M,
-    S: IntoSystem<Vec<(Entity, Scroller, Box<T::I>)>, (), M>,
+    S: IntoSystem<SpawnerInput<T>, (), M>,
   >(
     &mut self,
     system: S,
