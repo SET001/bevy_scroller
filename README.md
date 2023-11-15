@@ -7,6 +7,7 @@ A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things and c
 [![crates.io](https://img.shields.io/crates/v/bevy_scroller)](https://crates.io/crates/bevy_scroller)
 [![crates.io](https://img.shields.io/crates/d/bevy_scroller)](https://crates.io/crates/bevy_scroller)
 [![docs.rs](https://docs.rs/bevy_scroller/badge.svg)](https://docs.rs/bevy_scroller)
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 ![parallax](assets/examples/parallax.gif)
 </div>
@@ -108,6 +109,12 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 
 ## Examples
 
+Run examples with
+
+```
+cargo run --example <example> --features=bevy/default --release
+```
+
 | example | preview | description |
 |----|-----|---------------|
 | [single](examples/parallax.rs) | | shows a basic usage |
@@ -116,7 +123,7 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 | [multiple](examples/multiple.rs) | | example of muptiple scrollers |
 | [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | <span id="example_parallax"></span> [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
-| [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. |
+| [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. Run this example with additionall `poisson` feature |
 | <span id="example_tilemap"></span> [tilemaps](examples/tilemap.rs) | ![tilemap](assets/examples/tilemap.gif) | Show how to use scrollers with tilemaps. It uses custom generator to generate scroller items with tilemaps based on [bevy_ecs_tilemap](https://github.com/StarArawn/bevy_ecs_tilemap) |
 
 ## Bevy Compatibility
@@ -132,3 +139,17 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 - [gems](https://opengameart.org/content/gems-set-01)
 - [parallax](https://ansimuz.itch.io/mountain-dusk-parallax-background)
 - tilemap - [Cute Forest](https://aamatniekss.itch.io/free-pixelart-tileset-cute-forest) and [Ocean Background](https://opengameart.org/content/ocean-background)
+
+
+---
+### License
+<sup>
+Licensed under either of <a href="LICENSE-APACHE">Apache License, Version
+2.0</a> or <a href="LICENSE-MIT">MIT license</a> at your option.
+</sup>
+<br>
+<sub>
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in this crate by you, as defined in the Apache-2.0 license, shall
+be dual licensed as above, without any additional terms or conditions.
+</sub>
