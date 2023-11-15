@@ -133,3 +133,17 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 - [gems](https://opengameart.org/content/gems-set-01)
 - [parallax](https://ansimuz.itch.io/mountain-dusk-parallax-background)
 - tilemap - [Cute Forest](https://aamatniekss.itch.io/free-pixelart-tileset-cute-forest) and [Ocean Background](https://opengameart.org/content/ocean-background)
+
+
+---
+### License
+<sup>
+Licensed under either of <a href="LICENSE-APACHE">Apache License, Version
+2.0</a> or <a href="LICENSE-MIT">MIT license</a> at your option.
+</sup>
+<br>
+<sub>
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in this crate by you, as defined in the Apache-2.0 license, shall
+be dual licensed as above, without any additional terms or conditions.
+</sub>
