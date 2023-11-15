@@ -109,6 +109,12 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 
 ## Examples
 
+Run examples with
+
+```
+cargo run --example <example> --features=bevy/default --release
+```
+
 | example | preview | description |
 |----|-----|---------------|
 | [single](examples/parallax.rs) | | shows a basic usage |
@@ -117,7 +123,7 @@ Also see existing generators ([sprite](src/generators/sprite.rs), [poisson](src/
 | [multiple](examples/multiple.rs) | | example of muptiple scrollers |
 | [mirrors](examples/mirrors.rs) | ![parallax](assets/examples/mirrors.gif) | example of how you can render scroller to texture and then use that texture to show this same scroller in other parts of applications |
 | <span id="example_parallax"></span> [parallax](examples/parallax.rs) | ![parallax](assets/examples/parallax.gif) | showing how you can set up a parallax with this plugin |
-| [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. |
+| [poisson](examples/poisson.rs) | ![parallax](assets/examples/poisson.gif) | use of poisson generator to fill space with sprites and scroll them all. Set up radius to ensure that no entity generated closer than that radius. Run this example with additionall `poisson` feature |
 | <span id="example_tilemap"></span> [tilemaps](examples/tilemap.rs) | ![tilemap](assets/examples/tilemap.gif) | Show how to use scrollers with tilemaps. It uses custom generator to generate scroller items with tilemaps based on [bevy_ecs_tilemap](https://github.com/StarArawn/bevy_ecs_tilemap) |
 
 ## Bevy Compatibility
