@@ -7,6 +7,7 @@ A small [Bevy](https://github.com/bevyengine/bevy) plugin to scroll things and c
 [![crates.io](https://img.shields.io/crates/v/bevy_scroller)](https://crates.io/crates/bevy_scroller)
 [![crates.io](https://img.shields.io/crates/d/bevy_scroller)](https://crates.io/crates/bevy_scroller)
 [![docs.rs](https://docs.rs/bevy_scroller/badge.svg)](https://docs.rs/bevy_scroller)
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 ![parallax](assets/examples/parallax.gif)
 </div>
