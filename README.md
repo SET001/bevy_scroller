@@ -139,7 +139,7 @@ cargo run --example <example> --features=bevy/default --release
 - [gems](https://opengameart.org/content/gems-set-01)
 - [parallax](https://ansimuz.itch.io/mountain-dusk-parallax-background)
 - tilemap - [Cute Forest](https://aamatniekss.itch.io/free-pixelart-tileset-cute-forest) and [Ocean Background](https://opengameart.org/content/ocean-background)
-
+- sprite_sheet - generated with https://old-flick.itch.io/sprite-randomizer
 
 ---
 ### License
