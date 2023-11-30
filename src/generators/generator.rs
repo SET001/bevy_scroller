@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use crate::Scroller;
 
-pub trait GeneratedItem {
+pub trait GeneratedItem: Debug {
   fn size(&self) -> Vec2;
 }
 pub trait ScrollerGenerator: Default {
