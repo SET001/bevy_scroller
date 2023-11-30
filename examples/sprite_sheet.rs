@@ -26,7 +26,7 @@ fn startup(
   let primary_window = windows.get_single().expect("no primary window");
   commands.spawn(Camera2dBundle::default());
 
-  let texture_handle = asset_server.load("dunowhat.png");
+  let texture_handle = asset_server.load("sprite_sheet.png");
   let sprite_size = Vec2::new(64., 64.);
   let texture_atlas = TextureAtlas::from_grid(texture_handle, sprite_size, 10, 10, None, None);
   let texture_atlas_handle = texture_atlases.add(texture_atlas);
