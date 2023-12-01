@@ -6,6 +6,7 @@ use rand::{seq::SliceRandom, thread_rng};
 use crate::{Scroller, ScrollerItem};
 
 #[derive(Component, Reflect)]
+#[reflect(Component)]
 pub enum ScrollerGenerator {
   SpriteSingle(String),
   SpriteSequence(VecDeque<String>),

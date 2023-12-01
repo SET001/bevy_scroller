@@ -5,6 +5,7 @@ use rand::{seq::SliceRandom, thread_rng};
 use crate::{Scroller, ScrollerItem, ScrollerSize};
 
 #[derive(Component, Default, Reflect)]
+#[reflect(Component)]
 pub struct PoissonScrollerGenerator {
   pub radius: f32,
   pub sprites: Vec<String>,
