@@ -107,12 +107,20 @@ pub fn init(
   mut scroller_index: Local<UnnamedScrollerIndex>,
   mut commands: Commands,
   mut q_added_scroller: Query<
-    (Entity, &mut Scroller, &ScrollerSize, Option<&Name>),
+    (
+      Entity,
+      &mut Scroller,
+      &ScrollerSize,
+      Option<&Name>,
+      Option<&Transform>,
+    ),
     Added<ScrollerSize>,
   >,
   mut images: ResMut<Assets<Image>>,
 ) {
-  for (entity, mut scroller, scroller_size, maybe_name) in q_added_scroller.iter_mut() {
+  for (entity, mut scroller, scroller_size, maybe_name, maybe_transform) in
+    q_added_scroller.iter_mut()
+  {
     let name = match maybe_name {
       Some(name) => name.to_string(),
       None => {
@@ -122,12 +130,21 @@ pub fn init(
         name
       }
     };
+    let transform = match maybe_transform {
+      Some(transform) => transform.clone(),
+      None => Transform::default(),
+    };
     debug!("Init scroller: {name}");
 
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
     scroller.start = -scroller.end;
     scroller.spawn_edge = scroller.end;
     commands.entity(entity).insert(NeedInitialFilling);
+    commands.entity(entity).insert(SpatialBundle {
+      visibility: Visibility::Hidden,
+      transform,
+      ..Default::default()
+    });
 
     if let Some(render_layer) = scroller.render_layer {
       let size = Extent3d {
