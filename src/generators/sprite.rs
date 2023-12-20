@@ -18,7 +18,7 @@ impl GeneratedItem for SpriteScrollerItem {
   }
 }
 
-#[derive(Component, Clone, Default)]
+#[derive(Component, Clone, Default, Reflect)]
 pub struct SingleSpriteGenerator {
   pub path: String,
   pub size: Vec2,

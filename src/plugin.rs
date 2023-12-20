@@ -16,6 +16,8 @@ impl Plugin for ScrollerPlugin {
       .register_type::<ScrollerSize>()
       .register_type::<ScrollerDirection>()
       .register_type::<SequenceSpriteGenerator>()
+      .register_type::<SingleSpriteGenerator>()
+      .register_type::<RandomSequenceSpriteGenerator>()
       .register_type::<Vec<String>>()
       .register_type::<Vec<Entity>>()
       .add_scroller_generator::<SingleSpriteGenerator, _, _>(sprite_spawner)
