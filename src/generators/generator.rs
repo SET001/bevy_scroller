@@ -14,7 +14,7 @@ pub trait ScrollerGenerator: Default {
 
 pub type SpawnerInput<T> = Vec<(Entity, Scroller, Box<<T as ScrollerGenerator>::I>)>;
 
-const GENERATIONS_LIMIT: u32 = 300;
+const GENERATIONS_LIMIT: u32 = 3000;
 
 pub fn pre_generator<T>(mut q_scroller: Query<(Entity, &Scroller, &mut T)>) -> SpawnerInput<T>
 where
