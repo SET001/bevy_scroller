@@ -1,13 +1,11 @@
 use bevy::{
-  prelude::*,
-  reflect::Reflect,
-  render::{
+  ecs::system::SystemId, prelude::*, reflect::Reflect, render::{
     camera::{RenderTarget, Viewport},
     render_resource::{
       Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
     view::RenderLayers,
-  },
+  }
 };
 
 use crate::ScrollerGenerator;
@@ -38,6 +36,9 @@ pub struct ScrollerItem {
   pub size: Vec2,
   pub parent: Entity,
 }
+
+#[derive(Component)]
+pub struct OnScrollerInit(pub SystemId<Entity>);
 
 #[derive(Copy, Clone, Default, Component, Reflect)]
 pub struct ScrollerSize {
@@ -154,6 +155,7 @@ pub fn init(
       image.resize(size);
       let image_handle = images.add(image); //  TODO: remove it on cleanup
       scroller.texture_handle = image_handle.clone();
+      debug!("render texture is: {:?}", scroller.texture_handle);
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
@@ -258,6 +260,7 @@ pub fn update(
     &mut Scroller,
     &mut Visibility,
     Option<&NeedInitialFilling>,
+    Option<&OnScrollerInit>,
     Entity,
   )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
@@ -268,12 +271,15 @@ pub fn update(
 
   //   if delta > 0. {
   // println!("========= {}", q_item.iter().count());
-  for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
+  for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in q_scroller.iter_mut() {
     if maybe_need_filling.is_some() && !scroller.new_item_needed() {
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)
         .remove::<NeedInitialFilling>();
+      if let Some(on_init) = maybe_on_init{
+        commands.run_system_with_input(on_init.0, scroller_entity);
+      }
     }
     if !scroller.is_paused {
       let update_step = delta / step * scroller.speed;

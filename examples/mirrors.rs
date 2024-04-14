@@ -1,14 +1,13 @@
 use std::f32::consts::PI;
 
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{ecs::system::RunSystemOnce, prelude::*, window::PrimaryWindow};
 use bevy_scroller::*;
 
 fn main() {
   let mut app = App::new();
   app
     .add_plugins((DefaultPlugins, ScrollerPlugin))
-    .add_systems(Startup, start)
-    .add_systems(Update, init_mirror);
+    .add_systems(Startup, start);
   #[cfg(feature = "dev")]
   {
     use bevy_editor_pls::EditorPlugin;
@@ -17,14 +16,19 @@ fn main() {
   app.run();
 }
 
-pub fn start(
+pub fn start(world: &mut World){
+  let mirrors = world.register_system(spawn_mirrors);
+  let scroller_entity = world.run_system_once(spawn_scroller);
+  world.entity_mut(scroller_entity).insert(OnScrollerInit(mirrors));
+}
+
+pub fn spawn_scroller(
   mut commands: Commands,
   windows: Query<&Window, With<PrimaryWindow>>,
   asset_server: Res<AssetServer>,
-) {
+) -> Entity{
   let window = windows.get_single().expect("no primary window");
   let sprite_size = Vec2::new(128., 128.);
-
   commands.spawn(Camera2dBundle::default());
 
   let items = (1..=7)
@@ -55,55 +59,56 @@ pub fn start(
         10.,
       ))),
       ..default()
-    },
-  ));
+    }
+  )).id()
+
 }
 
-fn init_mirror(
+fn spawn_mirrors(
+  In(scroller_entity): In<Entity>,
   mut commands: Commands,
-  q_initialized: Query<&Scroller, Added<Scroller>>,
   windows: Query<&Window, With<PrimaryWindow>>,
+  q_scroller: Query<&Scroller>,
 ) {
-  if let Ok(scroller) = q_initialized.get_single() {
-    let window = windows.get_single().expect("no primary window");
-    let sprite_size = Vec2::new(128., 128.);
-    commands.spawn((
-      SpriteBundle {
-        texture: scroller.texture_handle.clone(),
-        transform: Transform {
-          translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 10.),
-          rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI),
-          ..default()
-        },
+  let scroller = q_scroller.get(scroller_entity).unwrap();
+  let window = windows.get_single().expect("no primary window");
+  let sprite_size = Vec2::new(128., 128.);
+  commands.spawn((
+    SpriteBundle {
+      texture: scroller.texture_handle.clone(),
+      transform: Transform {
+        translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 10.),
+        rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI),
         ..default()
       },
-      Name::new("Scroller mirror top"),
-    ));
+      ..default()
+    },
+    Name::new("Scroller mirror top"),
+  ));
 
-    commands.spawn((
-      SpriteBundle {
-        texture: scroller.texture_handle.clone(),
-        transform: Transform {
-          translation: Vec3::new((window.width() - sprite_size.x) / 2., 0., 00.),
-          rotation: Quat::from_rotation_z(PI / 2.),
-          ..default()
-        },
+  commands.spawn((
+    SpriteBundle {
+      texture: scroller.texture_handle.clone(),
+      transform: Transform {
+        translation: Vec3::new((window.width() - sprite_size.x) / 2., 0., 00.),
+        rotation: Quat::from_rotation_z(PI / 2.),
         ..default()
       },
-      Name::new("Scroller mirror right"),
-    ));
+      ..default()
+    },
+    Name::new("Scroller mirror right"),
+  ));
 
-    commands.spawn((
-      SpriteBundle {
-        texture: scroller.texture_handle.clone(),
-        transform: Transform {
-          translation: Vec3::new((sprite_size.x - window.width()) / 2., 0., 0.),
-          rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI / 2.),
-          ..default()
-        },
+  commands.spawn((
+    SpriteBundle {
+      texture: scroller.texture_handle.clone(),
+      transform: Transform {
+        translation: Vec3::new((sprite_size.x - window.width()) / 2., 0., 0.),
+        rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI / 2.),
         ..default()
       },
-      Name::new("Scroller mirror left"),
-    ));
-  };
+      ..default()
+    },
+    Name::new("Scroller mirror left"),
+  ));
 }
