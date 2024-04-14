@@ -27,7 +27,13 @@ fn startup(
   commands.spawn(Camera2dBundle::default());
 
   let texture = asset_server.load("sprite_sheet.png");
-  let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(Vec2::splat(64.), 10, 10, None, None));
+  let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
+    Vec2::splat(64.),
+    10,
+    10,
+    None,
+    None,
+  ));
   let sprite_size = Vec2::new(64., 64.);
 
   commands.spawn((
@@ -43,7 +49,7 @@ fn startup(
       generator: SequenceSpriteSheetGenerator {
         sprites: VecDeque::from_iter(0..100),
         layout,
-        texture
+        texture,
       },
       ..default()
     },

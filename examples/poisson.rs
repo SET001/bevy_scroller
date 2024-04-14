@@ -1,8 +1,7 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  Scroller, PoissonSpriteGenerator, ScrollerBundle, ScrollerPlugin, ScrollerSize,
+  PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
 };
-
 
 fn main() {
   let mut app = App::new();

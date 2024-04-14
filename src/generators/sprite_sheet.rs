@@ -47,9 +47,9 @@ pub fn spritesheet_spawner(
       SpriteSheetBundle {
         visibility: Visibility::Hidden,
         sprite: Sprite::default(),
-        atlas: TextureAtlas{
+        atlas: TextureAtlas {
           layout: generator.layout.clone(),
-          index: item.sprite as usize
+          index: item.sprite as usize,
         },
         texture: generator.texture.clone(),
         transform: Transform::from_scale(Vec3::splat(2.0)),
