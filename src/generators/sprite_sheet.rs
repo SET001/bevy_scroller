@@ -17,7 +17,8 @@ impl GeneratedItem for SpriteSheetScrollerItem {
 
 #[derive(Default, Component, Clone)]
 pub struct SequenceSpriteSheetGenerator {
-  pub texture_atlas: Handle<TextureAtlas>,
+  pub layout: Handle<TextureAtlasLayout>,
+  pub texture: Handle<Image>,
   pub sprites: VecDeque<u32>,
 }
 
@@ -45,8 +46,12 @@ pub fn spritesheet_spawner(
       },
       SpriteSheetBundle {
         visibility: Visibility::Hidden,
-        texture_atlas: generator.texture_atlas.clone(),
-        sprite: TextureAtlasSprite::new(item.sprite as usize),
+        sprite: Sprite::default(),
+        atlas: TextureAtlas{
+          layout: generator.layout.clone(),
+          index: item.sprite as usize
+        },
+        texture: generator.texture.clone(),
         transform: Transform::from_scale(Vec3::splat(2.0)),
         ..default()
       },

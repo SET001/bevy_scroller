@@ -20,16 +20,15 @@ fn main() {
 fn startup(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
-  mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+  mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
   windows: Query<&Window, With<PrimaryWindow>>,
 ) {
   let primary_window = windows.get_single().expect("no primary window");
   commands.spawn(Camera2dBundle::default());
 
-  let texture_handle = asset_server.load("sprite_sheet.png");
+  let texture = asset_server.load("sprite_sheet.png");
+  let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(Vec2::splat(64.), 10, 10, None, None));
   let sprite_size = Vec2::new(64., 64.);
-  let texture_atlas = TextureAtlas::from_grid(texture_handle, sprite_size, 10, 10, None, None);
-  let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
   commands.spawn((
     ScrollerSize {
@@ -43,7 +42,8 @@ fn startup(
       },
       generator: SequenceSpriteSheetGenerator {
         sprites: VecDeque::from_iter(0..100),
-        texture_atlas: texture_atlas_handle,
+        layout,
+        texture
       },
       ..default()
     },
