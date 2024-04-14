@@ -68,6 +68,7 @@ pub fn poisson_generator(
           size: item.size,
           parent: *entity,
         },
+        Name::new("scroller slide"),
         SpatialBundle::default(),
       ))
       .with_children(|parent| {

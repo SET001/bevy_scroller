@@ -28,7 +28,7 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
     },
     ScrollerBundle {
       scroller: Scroller {
-        speed: 1.,
+        speed: 3.,
         render_layer: Some(1),
         ..default()
       },

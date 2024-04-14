@@ -261,9 +261,10 @@ pub fn update(
     Entity,
   )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
+  time_fixed: Res<Time<Fixed>>
 ) {
-  //   let step: f32 = 1. / 60.;
-  //   let delta = time.delta_seconds();
+  let step: f32 = 1. / 60.;
+  let delta = time_fixed.delta_seconds();
 
   //   if delta > 0. {
   // println!("========= {}", q_item.iter().count());
@@ -275,6 +276,9 @@ pub fn update(
         .remove::<NeedInitialFilling>();
     }
     if !scroller.is_paused {
+      let update_step = delta / step * scroller.speed;
+      let update_step = scroller.speed;
+
       scroller.spawn_edge += scroller.speed * scroller.direction.as_f32();
       q_item
         .iter_mut()
@@ -285,8 +289,7 @@ pub fn update(
         })
     }
   }
-  // let update_step = delta / step * scroller.speed;
-  // let update_step = scroller.speed;
+  
   // trace!("update_step: {update_step}, delta: {delta}");
   // println!(
   //   "current translation of {:?} is : {}",
