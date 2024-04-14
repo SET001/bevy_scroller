@@ -23,7 +23,7 @@ fn main() {
     .add_systems(Startup, startup)
     .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
     .add_systems(OnEnter(AppStates::Run), run)
-    .add_state::<AppStates>();
+    .init_state::<AppStates>();
   #[cfg(feature = "dev")]
   {
     use bevy_editor_pls::EditorPlugin;

@@ -113,6 +113,7 @@ Run examples with
 
 ```
 cargo run --example <example> --features=bevy/default --release
+cargo run --example poisson --features=bevy/default,poisson --release
 ```
 
 | example | preview | description |
