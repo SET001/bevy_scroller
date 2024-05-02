@@ -155,8 +155,7 @@ pub fn init(
       image.resize(size);
       let image_handle = images.add(image); //  TODO: remove it on cleanup
       scroller.texture_handle = image_handle.clone();
-      debug!("render texture is: {:?}", scroller.texture_handle);
-
+      
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
           Camera2dBundle {
@@ -282,16 +281,16 @@ pub fn update(
       }
     }
     if !scroller.is_paused {
-      let update_step = delta / step * scroller.speed;
-      let update_step = scroller.speed;
+      let update_step = delta  * scroller.speed * scroller.direction.as_f32();
+      // let update_step = scroller.speed;
 
-      scroller.spawn_edge += scroller.speed * scroller.direction.as_f32();
+      scroller.spawn_edge += update_step ;
       q_item
         .iter_mut()
         .filter(|(_, _, item)| item.parent == scroller_entity)
         .for_each(|(mut transform, _, _)| {
           transform.translation +=
-            Vec2::from([scroller.speed * scroller.direction.as_f32(), 0.]).extend(0.);
+            Vec2::from([update_step, 0.]).extend(0.);
         })
     }
   }
