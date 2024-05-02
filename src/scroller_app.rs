@@ -22,7 +22,7 @@ impl ScrollerApp for App {
     &mut self,
     system: S,
   ) -> &mut Self {
-    self.add_systems(FixedUpdate, pre_generator::<T>.pipe(system));
+    self.add_systems(Update, pre_generator::<T>.pipe(system));
     self
   }
 }
