@@ -27,7 +27,7 @@ fn start(mut commands: Commands, primary_window: Query<&Window, With<PrimaryWind
     },
     ScrollerBundle {
       scroller: Scroller {
-        speed: 5.,
+        speed: 200.,
         ..Default::default()
       },
       generator: PoissonSpriteGenerator {
