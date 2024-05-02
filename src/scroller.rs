@@ -231,8 +231,8 @@ pub fn scroller_debug(
       }
     }
   }
-  for (global_transfrorm, scroller, scroller_size) in q_scroller.iter() {
-    let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
+  for (global_transform, scroller, scroller_size) in q_scroller.iter() {
+    let (scale, rotation, translation) = global_transform.to_scale_rotation_translation();
 
     gizmos.line_2d(
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
