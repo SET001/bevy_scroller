@@ -23,16 +23,16 @@ impl Plugin for ScrollerPlugin {
       .add_scroller_generator::<SequenceSpriteSheetGenerator, _, _>(spritesheet_spawner)
       .add_scroller_generator::<RandomSequenceSpriteGenerator, _, _>(sprite_spawner)
       .add_systems(
-        FixedUpdate,
+        Update,
         (
           init,
           on_items_added,
-          update,
           #[cfg(feature = "dev")]
           scroller_debug,
           delete_items
         ).chain(),
-      );
+      )
+      .add_systems(FixedUpdate,update);
     #[cfg(feature = "poisson")]
     {
       use crate::{poisson_generator, PoissonSpriteGenerator};
