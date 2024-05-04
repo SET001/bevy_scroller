@@ -263,13 +263,11 @@ pub fn update(
     Entity,
   )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
-  time_fixed: Res<Time<Fixed>>
+  time_fixed: Res<Time<Virtual>>
 ) {
   let step: f32 = 1. / 60.;
   let delta = time_fixed.delta_seconds();
 
-  //   if delta > 0. {
-  // println!("========= {}", q_item.iter().count());
   for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in q_scroller.iter_mut() {
     if maybe_need_filling.is_some() && !scroller.new_item_needed() {
       *visibility = Visibility::Inherited;
@@ -281,26 +279,19 @@ pub fn update(
       }
     }
     if !scroller.is_paused {
-      let update_step = delta  * scroller.speed * scroller.direction.as_f32();
-      // let update_step = scroller.speed;
+      // let update_step = delta  * scroller.speed * scroller.direction.as_f32();
+      let update_step = delta / step * scroller.speed * scroller.direction.as_f32();
+      // let update_step = scroller.speed * scroller.direction.as_f32();
 
       scroller.spawn_edge += update_step ;
       q_item
         .iter_mut()
         .filter(|(_, _, item)| item.parent == scroller_entity)
         .for_each(|(mut transform, _, _)| {
-          transform.translation +=
-            Vec2::from([update_step, 0.]).extend(0.);
+          transform.translation.x += update_step;
         })
     }
   }
-  
-  // trace!("update_step: {update_step}, delta: {delta}");
-  // println!(
-  //   "current translation of {:?} is : {}",
-  //   entity, container_transform.translation
-  // );
-  // }
 }
 
 pub fn delete_items(
