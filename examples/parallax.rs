@@ -5,9 +5,6 @@ use bevy_scroller::{
   Scroller, ScrollerBundle, ScrollerDirection, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
 };
 
-#[derive(Resource)]
-pub struct ScrollerImages(Vec<Handle<Image>>);
-
 fn main() {
   let mut app = App::new();
   app
@@ -43,11 +40,6 @@ fn start(
   let images = (0..=5)
     .map(|i| format!("parallax/{i}.png"))
     .collect::<VecDeque<String>>();
-  let images_handles = images
-    .iter()
-    .map(|image_path| asset_server.load(image_path))
-    .collect::<Vec<Handle<Image>>>();
-  commands.insert_resource(ScrollerImages(images_handles));
 
   commands.spawn(SpriteBundle {
     texture: asset_server.load(images.get(0).unwrap()),
