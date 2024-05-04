@@ -7,8 +7,9 @@ fn main() {
     .add_plugins((DefaultPlugins.set(WindowPlugin {
       primary_window: Some(Window {
         present_mode: bevy::window::PresentMode::AutoNoVsync,
-          ..default()
-        }),
+        title: "BEVY_SCROLLER: random sequence example".into(),
+        ..default()
+      }),
       ..default()
     }), ScrollerPlugin))
     .add_systems(Startup, start);

@@ -11,6 +11,7 @@ fn main() {
     .add_plugins((DefaultPlugins.set(WindowPlugin {
       primary_window: Some(Window {
         present_mode: bevy::window::PresentMode::AutoNoVsync,
+        title: "BEVY_SCROLLER: multiple example".into(),
           ..default()
         }),
       ..default()
