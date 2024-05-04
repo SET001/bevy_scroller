@@ -19,7 +19,15 @@ pub enum AppStates {
 fn main() {
   let mut app = App::new();
   app
-    .add_plugins((DefaultPlugins, ScrollerPlugin))
+    .add_plugins((
+      DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
+            ..default()
+          }),
+        ..default()
+      }),
+    ScrollerPlugin))
     .add_systems(Startup, startup)
     .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
     .add_systems(OnEnter(AppStates::Run), run)
@@ -74,7 +82,7 @@ pub fn run(
     },
     ScrollerBundle {
       scroller: Scroller {
-        speed: 1.,
+        speed: 5.,
         ..default()
       },
       generator: SequenceSpriteGenerator { items },
