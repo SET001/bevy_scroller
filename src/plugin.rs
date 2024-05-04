@@ -27,12 +27,12 @@ impl Plugin for ScrollerPlugin {
         (
           init,
           on_items_added,
+          delete_items,
+          update,
           #[cfg(feature = "dev")]
-          scroller_debug,
-          delete_items
+          scroller_debug
         ).chain(),
-      )
-      .add_systems(FixedUpdate,update);
+      );
     #[cfg(feature = "poisson")]
     {
       use crate::{poisson_generator, PoissonSpriteGenerator};
