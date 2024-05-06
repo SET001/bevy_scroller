@@ -24,11 +24,12 @@ fn main() {
         primary_window: Some(Window {
           present_mode: bevy::window::PresentMode::AutoNoVsync,
           title: "BEVY_SCROLLER: sequence example".into(),
-            ..default()
-          }),
+          ..default()
+        }),
         ..default()
       }),
-    ScrollerPlugin))
+      ScrollerPlugin,
+    ))
     .add_systems(Startup, startup)
     .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
     .add_systems(OnEnter(AppStates::Run), run)

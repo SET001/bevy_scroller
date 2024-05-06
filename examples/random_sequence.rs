@@ -4,14 +4,17 @@ use bevy_scroller::*;
 fn main() {
   let mut app = App::new();
   app
-    .add_plugins((DefaultPlugins.set(WindowPlugin {
-      primary_window: Some(Window {
-        present_mode: bevy::window::PresentMode::AutoNoVsync,
-        title: "BEVY_SCROLLER: random sequence example".into(),
+    .add_plugins((
+      DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
+          title: "BEVY_SCROLLER: random sequence example".into(),
+          ..default()
+        }),
         ..default()
       }),
-      ..default()
-    }), ScrollerPlugin))
+      ScrollerPlugin,
+    ))
     .add_systems(Startup, start);
   app.run();
 }

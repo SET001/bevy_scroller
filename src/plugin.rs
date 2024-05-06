@@ -30,8 +30,9 @@ impl Plugin for ScrollerPlugin {
           delete_items,
           update,
           #[cfg(feature = "dev")]
-          scroller_debug
-        ).chain(),
+          scroller_debug,
+        )
+          .chain(),
       );
     #[cfg(feature = "poisson")]
     {

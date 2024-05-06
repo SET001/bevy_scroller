@@ -6,14 +6,17 @@ use bevy_scroller::*;
 fn main() {
   let mut app = App::new();
   app
-    .add_plugins((DefaultPlugins.set(WindowPlugin {
-      primary_window: Some(Window {
-        present_mode: bevy::window::PresentMode::AutoNoVsync,
-        title: "BEVY_SCROLLER: mirrors example".into(),
+    .add_plugins((
+      DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
+          title: "BEVY_SCROLLER: mirrors example".into(),
           ..default()
         }),
-      ..default()
-    }), ScrollerPlugin))
+        ..default()
+      }),
+      ScrollerPlugin,
+    ))
     .add_systems(Startup, start);
   #[cfg(feature = "dev")]
   {
@@ -23,17 +26,19 @@ fn main() {
   app.run();
 }
 
-pub fn start(world: &mut World){
+pub fn start(world: &mut World) {
   let mirrors = world.register_system(spawn_mirrors);
   let scroller_entity = world.run_system_once(spawn_scroller);
-  world.entity_mut(scroller_entity).insert(OnScrollerInit(mirrors));
+  world
+    .entity_mut(scroller_entity)
+    .insert(OnScrollerInit(mirrors));
 }
 
 pub fn spawn_scroller(
   mut commands: Commands,
   windows: Query<&Window, With<PrimaryWindow>>,
   asset_server: Res<AssetServer>,
-) -> Entity{
+) -> Entity {
   let window = windows.get_single().expect("no primary window");
   let sprite_size = Vec2::new(128., 128.);
   commands.spawn(Camera2dBundle::default());
@@ -49,26 +54,27 @@ pub fn spawn_scroller(
     })
     .collect::<Vec<SpriteScrollerItem>>();
 
-  commands.spawn((
-    ScrollerSize {
-      size: Vec2::new(window.width(), sprite_size.y),
-    },
-    ScrollerBundle {
-      scroller: Scroller {
-        speed: 5.,
-        render_layer: Some(1),
+  commands
+    .spawn((
+      ScrollerSize {
+        size: Vec2::new(window.width(), sprite_size.y),
+      },
+      ScrollerBundle {
+        scroller: Scroller {
+          speed: 5.,
+          render_layer: Some(1),
+          ..default()
+        },
+        generator: RandomSequenceSpriteGenerator { items },
+        spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
+          0.,
+          (sprite_size.y - window.height()) / 2.,
+          10.,
+        ))),
         ..default()
       },
-      generator: RandomSequenceSpriteGenerator { items },
-      spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
-        0.,
-        (sprite_size.y - window.height()) / 2.,
-        10.,
-      ))),
-      ..default()
-    }
-  )).id()
-
+    ))
+    .id()
 }
 
 fn spawn_mirrors(

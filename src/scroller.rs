@@ -1,11 +1,14 @@
 use bevy::{
-  ecs::system::SystemId, prelude::*, reflect::Reflect, render::{
+  ecs::system::SystemId,
+  prelude::*,
+  reflect::Reflect,
+  render::{
     camera::{RenderTarget, Viewport},
     render_resource::{
       Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
     view::RenderLayers,
-  }
+  },
 };
 
 use crate::ScrollerGenerator;
@@ -155,7 +158,7 @@ pub fn init(
       image.resize(size);
       let image_handle = images.add(image); //  TODO: remove it on cleanup
       scroller.texture_handle = image_handle.clone();
-      
+
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
           Camera2dBundle {
@@ -263,18 +266,20 @@ pub fn update(
     Entity,
   )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
-  time_fixed: Res<Time<Virtual>>
+  time_fixed: Res<Time<Virtual>>,
 ) {
   let step: f32 = 1. / 60.;
   let delta = time_fixed.delta_seconds();
 
-  for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in q_scroller.iter_mut() {
+  for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in
+    q_scroller.iter_mut()
+  {
     if maybe_need_filling.is_some() && !scroller.new_item_needed() {
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)
         .remove::<NeedInitialFilling>();
-      if let Some(on_init) = maybe_on_init{
+      if let Some(on_init) = maybe_on_init {
         commands.run_system_with_input(on_init.0, scroller_entity);
       }
     }
@@ -283,7 +288,7 @@ pub fn update(
       let update_step = delta / step * scroller.speed * scroller.direction.as_f32();
       // let update_step = scroller.speed * scroller.direction.as_f32();
 
-      scroller.spawn_edge += update_step ;
+      scroller.spawn_edge += update_step;
       q_item
         .iter_mut()
         .filter(|(_, _, item)| item.parent == scroller_entity)

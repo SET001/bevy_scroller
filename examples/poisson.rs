@@ -11,11 +11,12 @@ fn main() {
         primary_window: Some(Window {
           present_mode: bevy::window::PresentMode::AutoNoVsync,
           title: "BEVY_SCROLLER: poisson example".into(),
-            ..default()
-          }),
+          ..default()
+        }),
         ..default()
-      })
-      , ScrollerPlugin))
+      }),
+      ScrollerPlugin,
+    ))
     .add_systems(Startup, start);
   #[cfg(feature = "dev")]
   {
