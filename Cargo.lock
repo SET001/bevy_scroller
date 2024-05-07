@@ -914,6 +914,7 @@ dependencies = [
  "bevy",
  "bevy_editor_pls",
  "fast_poisson",
+ "iyes_perf_ui",
  "rand",
  "rstest",
 ]
@@ -2269,6 +2270,15 @@ checksum = "168fb715dda47215e360912c096649d23d58bf392ac62f73919e831745e40f26"
 dependencies = [
  "equivalent",
  "hashbrown",
+]
+
+[[package]]
+name = "iyes_perf_ui"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a49f5aa5866dadfdd274c45eddc0a94c84ad1ce0c02c27bcb33c34a20b961f9e"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]

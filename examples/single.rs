@@ -1,10 +1,11 @@
+mod shared;
+
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
   Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator,
 };
+use shared::*;
 
-mod shared;
-use shared::get_app;
 
 fn main() {
   get_app("BEVY_SCROLLER: single example".into())
@@ -34,10 +35,4 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
       ..default()
     },
   ));
-  #[cfg(feature = "dev")]
-  {
-    use iyes_perf_ui::*;
-
-    commands.spawn(PerfUiCompleteBundle::default());
-  }
 }

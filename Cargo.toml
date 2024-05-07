@@ -20,6 +20,7 @@ fast_poisson = { version = "1.0.0", features = [
   "single_precision",
 ], optional = true }
 rand = "0.8.5"
+iyes_perf_ui = {version="0.2.3"}
 
 [features]
 dev = ["bevy/bevy_gizmos", "bevy/dynamic_linking", "dep:bevy_editor_pls"]
