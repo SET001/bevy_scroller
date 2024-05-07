@@ -49,6 +49,7 @@ pub struct ScrollerSize {
 }
 
 #[derive(Default, Debug, Component, Clone, Reflect)]
+#[reflect(Component, Default)]
 pub struct Scroller {
   pub start: f32,
   pub end: f32,

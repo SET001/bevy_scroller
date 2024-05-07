@@ -16,6 +16,7 @@ impl GeneratedItem for SpriteSheetScrollerItem {
 }
 
 #[derive(Default, Component, Clone, Reflect)]
+#[reflect(Component)]
 pub struct SequenceSpriteSheetGenerator {
   pub layout: Handle<TextureAtlasLayout>,
   pub texture: Handle<Image>,
