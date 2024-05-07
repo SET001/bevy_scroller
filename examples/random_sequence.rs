@@ -1,22 +1,13 @@
+mod shared;
+
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::*;
+use shared::get_app;
 
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: random sequence example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
-    .add_systems(Startup, start);
-  app.run();
+  get_app("random sequence".into())
+    .add_systems(Startup, start)
+    .run();
 }
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {

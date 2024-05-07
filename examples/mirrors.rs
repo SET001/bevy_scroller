@@ -1,29 +1,12 @@
-use std::f32::consts::PI;
+mod shared;
 
 use bevy::{ecs::system::RunSystemOnce, prelude::*, window::PrimaryWindow};
 use bevy_scroller::*;
+use shared::get_app;
+use std::f32::consts::PI;
 
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: mirrors example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
-    .add_systems(Startup, start);
-  #[cfg(feature = "dev")]
-  {
-    use bevy_editor_pls::EditorPlugin;
-    app.add_plugins(EditorPlugin::default());
-  }
-  app.run();
+  get_app("mirrors".into()).add_systems(Startup, start).run();
 }
 
 pub fn start(world: &mut World) {

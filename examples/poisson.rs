@@ -1,29 +1,13 @@
+mod shared;
+
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
   PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
 };
+use shared::get_app;
 
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: poisson example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
-    .add_systems(Startup, start);
-  #[cfg(feature = "dev")]
-  {
-    use bevy_editor_pls::EditorPlugin;
-    app.add_plugins(EditorPlugin::default());
-  }
-  app.run();
+  get_app("poisson".into()).add_systems(Startup, start).run();
 }
 
 fn start(mut commands: Commands, primary_window: Query<&Window, With<PrimaryWindow>>) {

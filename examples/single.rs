@@ -1,29 +1,11 @@
+mod shared;
+
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
-};
+use bevy_scroller::{Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator};
+use shared::*;
 
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: single example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
-    .add_systems(Startup, start);
-  #[cfg(feature = "dev")]
-  {
-    use bevy_editor_pls::EditorPlugin;
-    app.add_plugins(EditorPlugin::default());
-  }
-  app.run();
+  get_app("single".into()).add_systems(Startup, start).run();
 }
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {

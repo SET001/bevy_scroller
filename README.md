@@ -116,6 +116,10 @@ cargo run --example <example> --features=bevy/default --release
 cargo run --example poisson --features=bevy/default,poisson --release
 ```
 
+
+You can also add `dev` feature to add wireframes and `bevy_editor_pls` to examples.
+
+
 | example | preview | description |
 |----|-----|---------------|
 | [single](examples/parallax.rs) | | shows a basic usage |
@@ -131,6 +135,7 @@ cargo run --example poisson --features=bevy/default,poisson --release
 
 | bevy | bevy_scroller |
 |-|-
+| 0.13.0 | 0.3.* |
 | 0.12.0 | 0.2.* |
 | 0.11.0 | 0.1.* |
 

@@ -26,6 +26,7 @@ dev = ["bevy/bevy_gizmos", "bevy/dynamic_linking", "dep:bevy_editor_pls"]
 poisson = ["dep:fast_poisson"]
 
 [dev-dependencies]
+iyes_perf_ui = {version="0.2.3"}
 rstest = "0.18.2"
 
 [profile.dev]
