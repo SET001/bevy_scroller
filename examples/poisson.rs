@@ -4,6 +4,7 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
   PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
 };
+use shared::get_app;
 
 fn main() {
   get_app("BEVY_SCROLLER: poisson example".into())
