@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+mod shared;
 
 use bevy::{
   asset::{LoadState, LoadedFolder},
@@ -6,6 +6,8 @@ use bevy::{
   window::PrimaryWindow,
 };
 use bevy_scroller::*;
+use shared::get_app;
+use std::collections::VecDeque;
 
 #[derive(Resource)]
 pub struct ScrollerImages(Handle<LoadedFolder>);
@@ -17,29 +19,12 @@ pub enum AppStates {
   Run,
 }
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: sequence example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
+  get_app("BEVY_SCROLLER: sequence example".into())
     .add_systems(Startup, startup)
     .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
     .add_systems(OnEnter(AppStates::Run), run)
-    .init_state::<AppStates>();
-  #[cfg(feature = "dev")]
-  {
-    use bevy_editor_pls::EditorPlugin;
-    app.add_plugins(EditorPlugin::default());
-  }
-  app.run();
+    .init_state::<AppStates>()
+    .run();
 }
 
 pub fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
