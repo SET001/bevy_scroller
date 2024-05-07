@@ -135,6 +135,7 @@ You can also add `dev` feature to add wireframes and `bevy_editor_pls` to exampl
 
 | bevy | bevy_scroller |
 |-|-
+| 0.13.0 | 0.3.* |
 | 0.12.0 | 0.2.* |
 | 0.11.0 | 0.1.* |
 
