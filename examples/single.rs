@@ -1,16 +1,11 @@
 mod shared;
 
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator,
-};
+use bevy_scroller::{Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator};
 use shared::*;
 
-
 fn main() {
-  get_app("BEVY_SCROLLER: single example".into())
-    .add_systems(Startup, start)
-    .run();
+  get_app("single".into()).add_systems(Startup, start).run();
 }
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {

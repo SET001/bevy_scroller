@@ -19,7 +19,7 @@ pub enum AppStates {
   Run,
 }
 fn main() {
-  get_app("BEVY_SCROLLER: sequence example".into())
+  get_app("sequence".into())
     .add_systems(Startup, startup)
     .add_systems(Update, wait_for_load.run_if(in_state(AppStates::Load)))
     .add_systems(OnEnter(AppStates::Run), run)

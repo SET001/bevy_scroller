@@ -8,9 +8,7 @@ use bevy_scroller::{
 use shared::get_app;
 
 fn main() {
-  get_app("BEVY_SCROLLER: parallax example".into())
-    .add_systems(Startup, start)
-    .run();
+  get_app("parallax".into()).add_systems(Startup, start).run();
 }
 
 fn start(

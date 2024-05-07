@@ -7,9 +7,7 @@ use bevy_scroller::{
 use shared::get_app;
 
 fn main() {
-  get_app("BEVY_SCROLLER: poisson example".into())
-    .add_systems(Startup, start)
-    .run();
+  get_app("poisson".into()).add_systems(Startup, start).run();
 }
 
 fn start(mut commands: Commands, primary_window: Query<&Window, With<PrimaryWindow>>) {

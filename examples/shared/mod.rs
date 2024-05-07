@@ -2,14 +2,14 @@ use bevy::prelude::*;
 use bevy_scroller::ScrollerPlugin;
 use iyes_perf_ui::*;
 
-pub fn get_app(title: String)->App{
-	let mut app = App::new();
-	app
+pub fn get_app(title: String) -> App {
+  let mut app = App::new();
+  app
     .add_plugins((
       DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
           // present_mode: bevy::window::PresentMode::AutoNoVsync,
-            title,
+          title: format!("BEVY_SCROLLER example: {}", title),
           ..default()
         }),
         ..default()
@@ -21,18 +21,14 @@ pub fn get_app(title: String)->App{
     .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
     .add_plugins(PerfUiPlugin)
     .add_systems(Startup, default_start);
-	#[cfg(feature = "dev")]
+  #[cfg(feature = "dev")]
   {
     use bevy_editor_pls::EditorPlugin;
-    app
-			.add_plugins(EditorPlugin::default())
+    app.add_plugins(EditorPlugin::default())
   };
-	app
+  app
 }
 
-
-fn default_start(
-  mut commands: Commands
-){
+fn default_start(mut commands: Commands) {
   commands.spawn(PerfUiCompleteBundle::default());
 }

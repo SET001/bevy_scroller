@@ -5,7 +5,7 @@ use bevy_scroller::*;
 use shared::get_app;
 
 fn main() {
-  get_app("BEVY_SCROLLER: random sequence example".into())
+  get_app("random sequence".into())
     .add_systems(Startup, start)
     .run();
 }

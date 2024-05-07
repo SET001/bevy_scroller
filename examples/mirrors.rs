@@ -1,14 +1,12 @@
 mod shared;
 
-use std::f32::consts::PI;
 use bevy::{ecs::system::RunSystemOnce, prelude::*, window::PrimaryWindow};
 use bevy_scroller::*;
 use shared::get_app;
+use std::f32::consts::PI;
 
 fn main() {
-  get_app("BEVY_SCROLLER: mirrors example".into())
-    .add_systems(Startup, start)
-    .run();
+  get_app("mirrors".into()).add_systems(Startup, start).run();
 }
 
 pub fn start(world: &mut World) {

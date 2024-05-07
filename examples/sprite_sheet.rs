@@ -5,7 +5,7 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{Scroller, ScrollerBundle, ScrollerSize, SequenceSpriteSheetGenerator};
 use shared::get_app;
 fn main() {
-  get_app("BEVY_SCROLLER: sprite sheet example".into())
+  get_app("sprite sheet".into())
     .add_systems(Startup, startup)
     .run();
 }

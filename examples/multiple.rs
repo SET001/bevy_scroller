@@ -6,9 +6,7 @@ use shared::get_app;
 use std::f32::consts::PI;
 
 fn main() {
-  get_app("BEVY_SCROLLER: multiple example".into())
-    .add_systems(Startup, start)
-    .run();
+  get_app("multiple".into()).add_systems(Startup, start).run();
 }
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
