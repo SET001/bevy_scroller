@@ -284,9 +284,7 @@ pub fn update(
       }
     }
     if !scroller.is_paused {
-      // let update_step = delta  * scroller.speed * scroller.direction.as_f32();
       let update_step = delta / step * scroller.speed * scroller.direction.as_f32();
-      // let update_step = scroller.speed * scroller.direction.as_f32();
 
       scroller.spawn_edge += update_step;
       q_item
