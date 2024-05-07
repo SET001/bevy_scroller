@@ -1,29 +1,15 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_scroller::{
-  Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize, SingleSpriteGenerator,
+  Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator,
 };
 
+mod shared;
+use shared::get_app;
+
 fn main() {
-  let mut app = App::new();
-  app
-    .add_plugins((
-      DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-          present_mode: bevy::window::PresentMode::AutoNoVsync,
-          title: "BEVY_SCROLLER: single example".into(),
-          ..default()
-        }),
-        ..default()
-      }),
-      ScrollerPlugin,
-    ))
-    .add_systems(Startup, start);
-  #[cfg(feature = "dev")]
-  {
-    use bevy_editor_pls::EditorPlugin;
-    app.add_plugins(EditorPlugin::default());
-  }
-  app.run();
+  get_app("BEVY_SCROLLER: single example".into())
+    .add_systems(Startup, start)
+    .run();
 }
 
 pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
@@ -48,4 +34,10 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
       ..default()
     },
   ));
+  #[cfg(feature = "dev")]
+  {
+    use iyes_perf_ui::*;
+
+    commands.spawn(PerfUiCompleteBundle::default());
+  }
 }
