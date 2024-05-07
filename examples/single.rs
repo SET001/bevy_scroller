@@ -6,7 +6,17 @@ use bevy_scroller::{
 fn main() {
   let mut app = App::new();
   app
-    .add_plugins((DefaultPlugins, ScrollerPlugin))
+    .add_plugins((
+      DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
+          title: "BEVY_SCROLLER: single example".into(),
+          ..default()
+        }),
+        ..default()
+      }),
+      ScrollerPlugin,
+    ))
     .add_systems(Startup, start);
   #[cfg(feature = "dev")]
   {
@@ -28,8 +38,7 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
     },
     ScrollerBundle {
       scroller: Scroller {
-        speed: 1.,
-        render_layer: Some(1),
+        speed: 5.,
         ..default()
       },
       generator: SingleSpriteGenerator {

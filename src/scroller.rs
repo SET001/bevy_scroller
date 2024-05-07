@@ -1,4 +1,5 @@
 use bevy::{
+  ecs::system::SystemId,
   prelude::*,
   reflect::Reflect,
   render::{
@@ -38,6 +39,9 @@ pub struct ScrollerItem {
   pub size: Vec2,
   pub parent: Entity,
 }
+
+#[derive(Component)]
+pub struct OnScrollerInit(pub SystemId<Entity>);
 
 #[derive(Copy, Clone, Default, Component, Reflect)]
 pub struct ScrollerSize {
@@ -230,8 +234,8 @@ pub fn scroller_debug(
       }
     }
   }
-  for (global_transfrorm, scroller, scroller_size) in q_scroller.iter() {
-    let (scale, rotation, translation) = global_transfrorm.to_scale_rotation_translation();
+  for (global_transform, scroller, scroller_size) in q_scroller.iter() {
+    let (scale, rotation, translation) = global_transform.to_scale_rotation_translation();
 
     gizmos.line_2d(
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
@@ -258,41 +262,39 @@ pub fn update(
     &mut Scroller,
     &mut Visibility,
     Option<&NeedInitialFilling>,
+    Option<&OnScrollerInit>,
     Entity,
   )>,
   mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
+  time_fixed: Res<Time<Virtual>>,
 ) {
-  //   let step: f32 = 1. / 60.;
-  //   let delta = time.delta_seconds();
+  let step: f32 = 1. / 60.;
+  let delta = time_fixed.delta_seconds();
 
-  //   if delta > 0. {
-  // println!("========= {}", q_item.iter().count());
-  for (mut scroller, mut visibility, maybe_need_filling, scroller_entity) in q_scroller.iter_mut() {
+  for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in
+    q_scroller.iter_mut()
+  {
     if maybe_need_filling.is_some() && !scroller.new_item_needed() {
       *visibility = Visibility::Inherited;
       commands
         .entity(scroller_entity)
         .remove::<NeedInitialFilling>();
+      if let Some(on_init) = maybe_on_init {
+        commands.run_system_with_input(on_init.0, scroller_entity);
+      }
     }
     if !scroller.is_paused {
-      scroller.spawn_edge += scroller.speed * scroller.direction.as_f32();
+      let update_step = delta / step * scroller.speed * scroller.direction.as_f32();
+
+      scroller.spawn_edge += update_step;
       q_item
         .iter_mut()
         .filter(|(_, _, item)| item.parent == scroller_entity)
         .for_each(|(mut transform, _, _)| {
-          transform.translation +=
-            Vec2::from([scroller.speed * scroller.direction.as_f32(), 0.]).extend(0.);
+          transform.translation.x += update_step;
         })
     }
   }
-  // let update_step = delta / step * scroller.speed;
-  // let update_step = scroller.speed;
-  // trace!("update_step: {update_step}, delta: {delta}");
-  // println!(
-  //   "current translation of {:?} is : {}",
-  //   entity, container_transform.translation
-  // );
-  // }
 }
 
 pub fn delete_items(
