@@ -39,3 +39,4 @@ opt-level = 3
 [[example]]
 name = "poisson"
 required-features = ["poisson"]
+path = "examples/poisson/rs"
