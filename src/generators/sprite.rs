@@ -18,7 +18,8 @@ impl GeneratedItem for SpriteScrollerItem {
   }
 }
 
-#[derive(Component, Clone, Default)]
+#[derive(Component, Clone, Default, Reflect)]
+#[reflect(Component)]
 pub struct SingleSpriteGenerator {
   pub path: String,
   pub size: Vec2,
@@ -36,6 +37,7 @@ impl ScrollerGenerator for SingleSpriteGenerator {
 }
 
 #[derive(Component, Default, Reflect, Clone)]
+#[reflect(Component)]
 pub struct SequenceSpriteGenerator {
   pub items: VecDeque<SpriteScrollerItem>,
 }
@@ -51,6 +53,7 @@ impl ScrollerGenerator for SequenceSpriteGenerator {
 }
 
 #[derive(Component, Default, Reflect, Clone)]
+#[reflect(Component)]
 pub struct RandomSequenceSpriteGenerator {
   pub items: Vec<SpriteScrollerItem>,
 }
