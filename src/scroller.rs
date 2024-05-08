@@ -116,13 +116,13 @@ pub fn init(
       &mut Scroller,
       &ScrollerSize,
       Option<&Name>,
-      Option<&GlobalTransform>,
+      &Transform,
     ),
     Added<ScrollerSize>,
   >,
   mut images: ResMut<Assets<Image>>,
 ) {
-  for (entity, mut scroller, scroller_size, maybe_name, maybe_gt) in q_added_scroller.iter_mut() {
+  for (entity, mut scroller, scroller_size, maybe_name, transform) in q_added_scroller.iter_mut() {
     let name = match maybe_name {
       Some(name) => name.to_string(),
       None => {
@@ -132,9 +132,11 @@ pub fn init(
         name
       }
     };
-    if maybe_gt.is_none() {
-      commands.entity(entity).insert(GlobalTransform::default());
-    }
+    commands.entity(entity).insert(SpatialBundle {
+      transform: *transform,
+      ..Default::default()
+    });
+
     debug!("Init scroller: {name}");
 
     scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
