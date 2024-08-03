@@ -57,7 +57,7 @@ pub struct Scroller {
   pub direction: ScrollerDirection,
   pub is_paused: bool,
   pub spawn_edge: f32,
-  pub render_layer: Option<u8>,
+  pub render_layer: Option<usize>,
   pub texture_handle: Handle<Image>,
 }
 

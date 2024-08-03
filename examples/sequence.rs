@@ -35,11 +35,12 @@ pub fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
 pub fn wait_for_load(
   scroller_images: Res<ScrollerImages>,
   asset_server: Res<AssetServer>,
-  mut next_state: ResMut<NextState<AppStates>>,
+  mut app_state: ResMut<NextState<AppStates>>,
 ) {
   if let Some(state) = asset_server.get_load_state(&scroller_images.0) {
     if state == LoadState::Loaded {
-      *next_state = NextState(Some(AppStates::Run));
+      app_state.set(AppStates::Run);
+      // *next_state = NextState(Some(AppStates::Run));
     }
   }
 }
@@ -54,7 +55,7 @@ pub fn run(
     .map(|i| {
       let path = format!("gems/{i}.png");
       let handle = asset_server.get_handle(path.clone()).unwrap();
-      let image = images.get(handle).unwrap();
+      let image = images.get(&handle).unwrap();
       SpriteScrollerItem {
         path,
         size: image.size().as_vec2(),

@@ -21,7 +21,7 @@ fn startup(
 
   let texture = asset_server.load("sprite_sheet.png");
   let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
-    Vec2::splat(64.),
+    UVec2::splat(64),
     10,
     10,
     None,
