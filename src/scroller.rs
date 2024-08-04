@@ -13,6 +13,9 @@ use bevy::{
 
 use crate::ScrollerGenerator;
 
+#[cfg(feature = "dev")]
+use bevy::color::palettes::basic::*;
+
 #[derive(Reflect, Default, Debug, Clone)]
 pub enum ScrollerDirection {
   #[default]
@@ -232,6 +235,8 @@ pub fn scroller_debug(
   q_scroller: Query<(&GlobalTransform, &Scroller, &ScrollerSize)>,
   mut gizmos: Gizmos,
 ) {
+  use bevy::color::palettes::css::BLUE;
+
   for (global_transform, item, visibility) in q_scroller_item.iter() {
     if let Some(visibility) = visibility {
       if visibility != Visibility::Hidden {
@@ -241,7 +246,7 @@ pub fn scroller_debug(
           translation.truncate(),
           rotation.to_axis_angle().1,
           item.size * scale.truncate(),
-          Color::BLUE,
+          BLUE,
         );
       }
     }
@@ -252,13 +257,13 @@ pub fn scroller_debug(
     gizmos.line_2d(
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / 2. + 20.) * scale.truncate(), //  TODO: take rotation into account
-      Color::RED,
+      RED,
     );
     gizmos.rect_2d(
       translation.truncate(),
       rotation.to_axis_angle().1,
       Vec2::new(scroller_size.size.x, scroller_size.size.y) * scale.truncate(),
-      Color::GREEN,
+      GREEN,
     );
     // gizmos.line_2d(
     //   Vec2::new(position.x, scroller.rect.min.y),

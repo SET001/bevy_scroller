@@ -15,7 +15,7 @@ version = "0.4.0"
 bevy = { version = "0.14", default-features = false, features = [
   "bevy_sprite",
 ] }
-bevy_editor_pls = { version = "0.8.1", optional = true }
+bevy_editor_pls = { version = "0.9.0", optional = true }
 fast_poisson = { version = "1.0.0", features = [
   "single_precision",
 ], optional = true }
@@ -40,3 +40,6 @@ opt-level = 3
 name = "poisson"
 required-features = ["poisson"]
 path = "examples/poisson.rs"
+
+[patch.crates-io]
+bevy_editor_pls = { git = "https://github.com/zhaop/bevy_editor_pls.git", branch = "bevy-0.14", optional = true }
