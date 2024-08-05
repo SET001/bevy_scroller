@@ -28,7 +28,6 @@ pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>
     ScrollerBundle {
       scroller: Scroller {
         speed: 5.,
-        render_layer: Some(1),
         ..default()
       },
       generator: RandomSequenceSpriteGenerator { items },

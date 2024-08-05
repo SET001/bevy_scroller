@@ -36,7 +36,6 @@ fn startup(
     ScrollerBundle {
       scroller: Scroller {
         speed: 1.,
-        render_layer: Some(1),
         ..default()
       },
       generator: SequenceSpriteSheetGenerator {
