@@ -203,6 +203,17 @@ pub fn init(
   }
 }
 
+pub fn on_scroller_resize(
+  mut q_size_changed: Query<(&mut Scroller, &ScrollerSize), Changed<ScrollerSize>>,
+) {
+  for (mut scroller, scroller_size) in q_size_changed.iter_mut() {
+    info!("item resized");
+    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
+    scroller.start = -scroller.end;
+    scroller.spawn_edge = scroller.end;
+  }
+}
+
 pub fn on_items_added(
   mut commands: Commands,
   mut q_added: Query<(&ScrollerItem, &mut Transform, &mut Visibility, Entity), Added<ScrollerItem>>,
