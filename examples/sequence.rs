@@ -40,7 +40,6 @@ pub fn wait_for_load(
   if let Some(state) = asset_server.get_load_state(&scroller_images.0) {
     if state == LoadState::Loaded {
       app_state.set(AppStates::Run);
-      // *next_state = NextState(Some(AppStates::Run));
     }
   }
 }
