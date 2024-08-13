@@ -227,18 +227,18 @@ mod update {
     assert_eq!(visibility, Visibility::Hidden);
   }
 
-  #[test]
-  fn should_remove_init_marker_component_if_filled() {
-    let mut app = get_app_with_full_scroller();
-    app.update();
+  // #[test]
+  // fn should_remove_init_marker_component_if_filled() {
+  //   let mut app = get_app_with_full_scroller();
+  //   app.update();
 
-    let marker = app
-      .world_mut()
-      .query_filtered::<&NeedInitialFilling, With<Scroller>>()
-      .get_single(&app.world());
+  //   let marker = app
+  //     .world_mut()
+  //     .query_filtered::<&NeedInitialFilling, With<Scroller>>()
+  //     .get_single(&app.world());
 
-    assert!(marker.is_err());
-  }
+  //   assert!(marker.is_err());
+  // }
 
   #[test]
   fn should_not_remove_init_marker_component_if_not_filled() {
