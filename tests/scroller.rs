@@ -34,7 +34,7 @@ fn get_app() -> App {
 fn get_app_with_empty_scroller() -> (App, Entity) {
   let mut app = get_app();
   let scroller = app
-    .world
+    .world_mut()
     .spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize {
@@ -48,7 +48,7 @@ fn get_app_with_empty_scroller() -> (App, Entity) {
 fn get_app_with_full_scroller() -> App {
   let (mut app, scroller) = get_app_with_empty_scroller();
 
-  app.world.spawn((
+  app.world_mut().spawn((
     ScrollerItem {
       parent: scroller,
       size: Vec2::new(2000., 100.),
@@ -68,25 +68,29 @@ mod init {
   #[test]
   fn should_insert_name_component_if_it_does_not_exist() {
     let mut app = get_app();
-    app.world.spawn((
+    app.world_mut().spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize::default(),
     ));
     app.update();
 
-    let name = app.world.query::<&Name>().get_single(&app.world).unwrap();
+    let name = app
+      .world_mut()
+      .query::<&Name>()
+      .get_single(&app.world())
+      .unwrap();
     assert_eq!(name.as_str(), "Scroller #1");
   }
 
   #[test]
   fn should_increment_unnamed_index() {
     let mut app = get_app();
-    app.world.spawn((
+    app.world_mut().spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize::default(),
     ));
 
-    app.world.spawn((
+    app.world_mut().spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize::default(),
     ));
@@ -94,9 +98,9 @@ mod init {
     app.update();
 
     let names = app
-      .world
+      .world_mut()
       .query::<&Name>()
-      .iter(&app.world)
+      .iter(&app.world())
       .map(|name| name.as_str())
       .collect::<Vec<&str>>();
 
@@ -107,14 +111,18 @@ mod init {
   fn should_preserve_name_if_it_exist() {
     let mut app = get_app();
     let name = "some name";
-    app.world.spawn((
+    app.world_mut().spawn((
       ScrollerBundle::<FooGenerator>::default(),
       Name::new(name),
       ScrollerSize::default(),
     ));
     app.update();
 
-    let comp_name = app.world.query::<&Name>().get_single(&app.world).unwrap();
+    let comp_name = app
+      .world_mut()
+      .query::<&Name>()
+      .get_single(&app.world())
+      .unwrap();
     assert_eq!(comp_name.as_str(), name);
   }
 }
@@ -159,7 +167,7 @@ mod pre_generator {
   fn should_panic_when_reaching_generation_limit() {
     let mut app = get_app();
     fn generator(_: In<SpawnerInput<FooGenerator>>) {}
-    app.world.spawn((
+    app.world_mut().spawn((
       ScrollerBundle::<FooGenerator>::default(),
       ScrollerSize {
         size: Vec2::new(100000., 100.),
@@ -188,9 +196,9 @@ mod update {
     app.update();
 
     let (_, visibility) = app
-      .world
+      .world_mut()
       .query::<(&Scroller, &Visibility)>()
-      .get_single(&app.world)
+      .get_single(&app.world())
       .unwrap();
     assert_eq!(visibility, Visibility::Inherited);
   }
@@ -202,18 +210,18 @@ mod update {
     app.update();
 
     let (_, mut visibility) = app
-      .world
+      .world_mut()
       .query::<(&Scroller, &mut Visibility)>()
-      .get_single_mut(&mut app.world)
+      .get_single_mut(app.world_mut())
       .unwrap();
     *visibility = Visibility::Hidden;
 
     app.update();
 
     let (_, visibility) = app
-      .world
+      .world_mut()
       .query::<(&Scroller, &Visibility)>()
-      .get_single(&app.world)
+      .get_single(&app.world())
       .unwrap();
 
     assert_eq!(visibility, Visibility::Hidden);
@@ -225,9 +233,9 @@ mod update {
     app.update();
 
     let marker = app
-      .world
+      .world_mut()
       .query_filtered::<&NeedInitialFilling, With<Scroller>>()
-      .get_single(&app.world);
+      .get_single(&app.world());
 
     assert!(marker.is_err());
   }
@@ -238,9 +246,9 @@ mod update {
     app.update();
 
     let marker = app
-      .world
+      .world_mut()
       .query_filtered::<&NeedInitialFilling, With<Scroller>>()
-      .get_single(&app.world);
+      .get_single(&app.world());
 
     assert!(marker.is_ok());
   }
