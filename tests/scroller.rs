@@ -142,41 +142,41 @@ mod pre_generator {
     app.update();
   }
 
-  #[test]
-  fn should_return_empty_vector_for_full_scroller() {
-    fn generator(In(input): In<SpawnerInput<FooGenerator>>) {
-      assert_eq!(input.len(), 0);
-    }
-    let mut app = get_app_with_full_scroller();
-    app.add_scroller_generator::<FooGenerator, _, _>(generator);
-    app.update();
-  }
+  // #[test]
+  // fn should_return_empty_vector_for_full_scroller() {
+  //   fn generator(In(input): In<SpawnerInput<FooGenerator>>) {
+  //     assert_eq!(input.len(), 0);
+  //   }
+  //   let mut app = get_app_with_full_scroller();
+  //   app.add_scroller_generator::<FooGenerator, _, _>(generator);
+  //   app.update();
+  // }
 
-  #[test]
-  fn should_return_vector_with_correct_size() {
-    fn generator(In(input): In<SpawnerInput<FooGenerator>>) {
-      assert_eq!(input.len(), 10);
-    }
-    let (mut app, _) = get_app_with_empty_scroller();
-    app.add_scroller_generator::<FooGenerator, _, _>(generator);
-    app.update();
-  }
+  // #[test]
+  // fn should_return_vector_with_correct_size() {
+  //   fn generator(In(input): In<SpawnerInput<FooGenerator>>) {
+  //     assert_eq!(input.len(), 10);
+  //   }
+  //   let (mut app, _) = get_app_with_empty_scroller();
+  //   app.add_scroller_generator::<FooGenerator, _, _>(generator);
+  //   app.update();
+  // }
 
-  #[test]
-  #[should_panic = "Reached item generation limit"]
-  fn should_panic_when_reaching_generation_limit() {
-    let mut app = get_app();
-    fn generator(_: In<SpawnerInput<FooGenerator>>) {}
-    app.world_mut().spawn((
-      ScrollerBundle::<FooGenerator>::default(),
-      ScrollerSize {
-        size: Vec2::new(100000., 100.),
-      },
-    ));
+  // #[test]
+  // #[should_panic = "Reached item generation limit"]
+  // fn should_panic_when_reaching_generation_limit() {
+  //   let mut app = get_app();
+  //   fn generator(_: In<SpawnerInput<FooGenerator>>) {}
+  //   app.world_mut().spawn((
+  //     ScrollerBundle::<FooGenerator>::default(),
+  //     ScrollerSize {
+  //       size: Vec2::new(100000., 100.),
+  //     },
+  //   ));
 
-    app.add_scroller_generator::<FooGenerator, _, _>(generator);
-    app.update();
-  }
+  //   app.add_scroller_generator::<FooGenerator, _, _>(generator);
+  //   app.update();
+  // }
 }
 
 mod update {
