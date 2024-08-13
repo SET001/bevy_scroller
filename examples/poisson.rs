@@ -1,9 +1,7 @@
 mod shared;
 
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{
-  PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerPlugin, ScrollerSize,
-};
+use bevy_scroller::{PoissonSpriteGenerator, Scroller, ScrollerBundle, ScrollerSize};
 use shared::get_app;
 
 fn main() {

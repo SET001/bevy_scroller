@@ -30,6 +30,7 @@ impl Plugin for ScrollerPlugin {
         (
           init,
           on_items_added,
+          on_scroller_resize,
           delete_items,
           update,
           #[cfg(feature = "dev")]

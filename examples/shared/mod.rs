@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use bevy_scroller::ScrollerPlugin;
-use iyes_perf_ui::*;
+use bevy::{prelude::*, window::WindowResized};
+use bevy_scroller::{ScrollerPlugin, ScrollerSize};
+use iyes_perf_ui::prelude::*;
 
 pub fn get_app(title: String) -> App {
   let mut app = App::new();
@@ -8,10 +8,11 @@ pub fn get_app(title: String) -> App {
     .add_plugins((
       DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-          // present_mode: bevy::window::PresentMode::AutoNoVsync,
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
           title: format!("BEVY_SCROLLER example: {}", title),
           ..default()
         }),
+
         ..default()
       }),
       ScrollerPlugin,
@@ -20,7 +21,8 @@ pub fn get_app(title: String) -> App {
     .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
     .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
     .add_plugins(PerfUiPlugin)
-    .add_systems(Startup, default_start);
+    .add_systems(Startup, default_start)
+    .add_systems(Update, on_resize);
   #[cfg(feature = "dev")]
   {
     use bevy_editor_pls::EditorPlugin;
@@ -31,4 +33,17 @@ pub fn get_app(title: String) -> App {
 
 fn default_start(mut commands: Commands) {
   commands.spawn(PerfUiCompleteBundle::default());
+}
+
+fn on_resize(
+  mut resize_reader: EventReader<WindowResized>,
+  mut scroller_size: Query<&mut ScrollerSize>,
+) {
+  for e in resize_reader.read() {
+    debug!("window resized: {:.1} x {:.1}", e.width, e.height);
+    for mut ss in scroller_size.iter_mut() {
+      ss.size.x = e.width;
+      ss.size.y = e.height;
+    }
+  }
 }

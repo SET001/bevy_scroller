@@ -12,10 +12,10 @@ repository = "https://github.com/SET001/bevy_scroller"
 version = "0.4.0"
 
 [dependencies]
-bevy = { version = "0.13.2", default-features = false, features = [
+bevy = { version = "0.14", default-features = false, features = [
   "bevy_sprite",
 ] }
-bevy_editor_pls = { version = "0.8.1", optional = true }
+bevy_editor_pls = { version = "0.9.0", optional = true }
 fast_poisson = { version = "1.0.0", features = [
   "single_precision",
 ], optional = true }
@@ -26,7 +26,7 @@ dev = ["bevy/bevy_gizmos", "bevy/dynamic_linking", "dep:bevy_editor_pls"]
 poisson = ["dep:fast_poisson"]
 
 [dev-dependencies]
-iyes_perf_ui = {version="0.2.3"}
+iyes_perf_ui = {version="0.3.0"}
 rstest = "0.18.2"
 
 [profile.dev]
@@ -39,4 +39,7 @@ opt-level = 3
 [[example]]
 name = "poisson"
 required-features = ["poisson"]
-path = "examples/poisson/rs"
+path = "examples/poisson.rs"
+
+[patch.crates-io]
+bevy_editor_pls = { git = "https://github.com/zhaop/bevy_editor_pls.git", branch = "bevy-0.14", optional = true }

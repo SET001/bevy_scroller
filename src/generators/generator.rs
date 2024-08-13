@@ -28,7 +28,7 @@ where
       let mut to_generate = vec![];
       while length > 0. && generations <= GENERATIONS_LIMIT {
         let item = generator.gen_item();
-        debug!("generated item is: {:?}", item);
+        trace!("generated item is: {:?}", item);
         length -= item.size().x;
         generations += 1;
         to_generate.push((entity, scroller.clone(), Box::new(item)));
