@@ -1,8 +1,8 @@
-use std::{any::TypeId, ops::Deref};
+use std::any::TypeId;
 
 use bevy::{ecs::system::SystemId, prelude::*, utils::HashMap};
 
-use crate::{pre_generator, Scroller, ScrollerGenerator, ScrollerSpawner, Size, SpawnerInput};
+use crate::{pre_generator, ScrollerGenerator, SpawnerInput};
 
 #[derive(Resource, Default)]
 pub struct ScrollerGenerators {

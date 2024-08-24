@@ -84,7 +84,7 @@ impl Component for ScrollerItem {
   const STORAGE_TYPE: bevy::ecs::component::StorageType = StorageType::Table;
   fn register_component_hooks(hooks: &mut bevy::ecs::component::ComponentHooks) {
     hooks.on_remove(|mut world, entity, _component_id| {
-      let item = world.get::<ScrollerItem>(entity).unwrap().clone();
+      let item = *world.get::<ScrollerItem>(entity).unwrap();
       let mut scroller = world.get_mut::<Scroller>(item.parent).unwrap();
       scroller.items_width -= item.size.x;
     });
@@ -104,7 +104,7 @@ pub fn on_add(
   let (mut scroller, size) = q_scroller.get_mut(item.parent).unwrap();
   // commands.entity(item.parent).add_child(trigger.entity());``
   item.limit_position = -(size.x + item.size.x) / 2.;
-  let item_size = item.size.clone();
+  let item_size = item.size;
   commands.entity(item.parent).add_child(trigger.entity());
   scroller.items_width += item.size.x;
 
@@ -166,7 +166,7 @@ pub fn init(
     Added<Scroller>,
   >,
 ) {
-  for (entity, mut scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
+  for (entity, scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
   {
     if maybe_direction.is_none() {
       warn!("Scroller without direction");

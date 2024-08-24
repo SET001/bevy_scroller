@@ -1,8 +1,8 @@
-use bevy::{ecs::system::SystemId, prelude::*};
+use bevy::prelude::*;
 use rand::{seq::SliceRandom, thread_rng};
 use std::collections::VecDeque;
 
-use crate::{Scroller, ScrollerItem};
+use crate::ScrollerItem;
 
 use super::{
   generator::{GeneratedItem, ScrollerGenerator},
@@ -79,7 +79,7 @@ pub fn sprite_spawner(
 ) {
   info!(
     "sprite spawner to generate {:?} items",
-    items.iter().count()
+    items.len()
   );
   items.iter().for_each(|item| {
     commands.spawn((

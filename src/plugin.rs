@@ -18,8 +18,8 @@ impl Default for ScrollerPlugin {
 use std::ops::Range;
 
 use crate::{
-  scroller::*, sprite_spawner, spritesheet_spawner, RandomSequenceSpriteGenerator, ScrollerApp,
-  ScrollerGenerators, SequenceSpriteGenerator, SequenceSpriteSheetGenerator, SingleSpriteGenerator,
+  scroller::*, sprite_spawner, ScrollerApp,
+  ScrollerGenerators, SequenceSpriteSheetGenerator, SingleSpriteGenerator,
 };
 use bevy::prelude::*;
 
