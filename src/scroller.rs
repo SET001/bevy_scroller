@@ -166,8 +166,7 @@ pub fn init(
     Added<Scroller>,
   >,
 ) {
-  for (entity, scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
-  {
+  for (entity, scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut() {
     if maybe_direction.is_none() {
       warn!("Scroller without direction");
     }
@@ -175,14 +174,10 @@ pub fn init(
       warn!("Scroller without size");
     }
     if let (Some(direction), Some(size)) = (maybe_direction, maybe_size) {
-      let name = match maybe_name {
-        Some(name) => name.to_string(),
-        None => {
-          let name = format!("Scroller #{}", scroller_index.0);
-          commands.entity(entity).insert(Name::new(name.clone()));
-          scroller_index.0 += 1;
-          name
-        }
+      if maybe_name.is_none() {
+        let name = format!("Scroller #{}", scroller_index.0);
+        commands.entity(entity).insert(Name::new(name.clone()));
+        scroller_index.0 += 1;
       };
 
       let size = Extent3d {
