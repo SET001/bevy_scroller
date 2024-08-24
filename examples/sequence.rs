@@ -72,7 +72,10 @@ pub fn run(
         speed: 5.,
         ..default()
       },
-      generator: SequenceSpriteGenerator { items },
+      generator: SequenceSpriteGenerator {
+				items
+			}
+			spawner: ,
       ..default()
     },
   ));
