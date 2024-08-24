@@ -292,7 +292,7 @@ pub fn fill_items(
 
 pub fn update(
   q_scroller: Query<(&Scroller, &Children)>,
-  mut q_item: Query<(&mut Transform)>,
+  mut q_item: Query<&mut Transform, With<ScrollerItem>>,
   time_fixed: Res<Time<Virtual>>,
 ) {
   let step: f32 = 1. / 60.;
