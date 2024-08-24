@@ -1,14 +1,17 @@
-use bevy::prelude::*;
+use bevy::{ecs::system::SystemId, prelude::*};
 use rand::{seq::SliceRandom, thread_rng};
 use std::collections::VecDeque;
 
-use crate::{Scroller, ScrollerGenerator, ScrollerItem};
+use crate::{Scroller, ScrollerItem};
 
-use super::generator::GeneratedItem;
+use super::{
+  generator::{GeneratedItem, ScrollerGenerator},
+  SpawnerInput,
+};
 
-#[derive(Clone, Reflect, Debug)]
+#[derive(Clone, Debug, Reflect)]
 pub struct SpriteScrollerItem {
-  pub path: String,
+  pub texture: Handle<Image>,
   pub size: Vec2,
 }
 
@@ -18,72 +21,87 @@ impl GeneratedItem for SpriteScrollerItem {
   }
 }
 
-#[derive(Component, Clone, Default, Reflect)]
-#[reflect(Component)]
+#[derive(Component, Clone)]
 pub struct SingleSpriteGenerator {
-  pub path: String,
+  pub texture: Handle<Image>,
   pub size: Vec2,
+  // spawner: SystemId,
 }
 
 impl ScrollerGenerator for SingleSpriteGenerator {
-  type I = SpriteScrollerItem;
+  type Item = SpriteScrollerItem;
 
-  fn gen_item(&mut self) -> Self::I {
-    Self::I {
+  // fn get_spawner(&self) -> SystemId {
+  //   self.spawner
+  // }
+
+  fn gen_item(&mut self) -> Self::Item {
+    Self::Item {
       size: self.size,
-      path: self.path.clone(),
+      texture: self.texture.clone(),
     }
   }
 }
 
-#[derive(Component, Default, Reflect, Clone)]
-#[reflect(Component)]
+#[derive(Component, Clone)]
 pub struct SequenceSpriteGenerator {
   pub items: VecDeque<SpriteScrollerItem>,
 }
 
 impl ScrollerGenerator for SequenceSpriteGenerator {
-  type I = SpriteScrollerItem;
+  type Item = SpriteScrollerItem;
 
-  fn gen_item(&mut self) -> Self::I {
+  fn gen_item(&mut self) -> Self::Item {
     let item = self.items.pop_front().unwrap();
     self.items.push_back(item.clone());
     item
   }
 }
 
-#[derive(Component, Default, Reflect, Clone)]
-#[reflect(Component)]
+#[derive(Component, Clone)]
 pub struct RandomSequenceSpriteGenerator {
   pub items: Vec<SpriteScrollerItem>,
 }
 
 impl ScrollerGenerator for RandomSequenceSpriteGenerator {
-  type I = SpriteScrollerItem;
+  type Item = SpriteScrollerItem;
 
-  fn gen_item(&mut self) -> Self::I {
+  fn gen_item(&mut self) -> Self::Item {
     let mut rng = thread_rng();
     self.items.choose(&mut rng).unwrap().clone()
   }
 }
 
 pub fn sprite_spawner(
-  In(input): In<Vec<(Entity, Scroller, Box<SpriteScrollerItem>)>>,
+  In((entity, items)): In<SpawnerInput<SpriteScrollerItem>>,
   mut commands: Commands,
   asset_server: Res<AssetServer>,
 ) {
-  input.into_iter().for_each(|(entity, _, item)| {
-    let handle = asset_server.load(item.path.clone());
+  info!(
+    "sprite spawner to generate {:?} items",
+    items.iter().count()
+  );
+  items.iter().for_each(|item| {
     commands.spawn((
-      ScrollerItem {
-        size: item.size(),
-        parent: entity,
-      },
+      ScrollerItem::new(item.size(), entity),
       SpriteBundle {
-        texture: handle,
-        visibility: Visibility::Hidden,
+        texture: item.texture.clone(),
         ..default()
       },
     ));
   });
+  // input.into_iter().for_each(|(entity, _, item)| {
+  //   let handle = asset_server.load(item.path.clone());
+  //   commands.spawn((
+  //     // ScrollerItem {
+  //     //   size: item.size(),
+  //     //   parent: entity,
+  //     // },
+  //     SpriteBundle {
+  //       texture: handle,
+  //       visibility: Visibility::Hidden,
+  //       ..default()
+  //     },
+  //   ));
+  // });
 }

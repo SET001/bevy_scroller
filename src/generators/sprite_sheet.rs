@@ -2,7 +2,9 @@ use std::collections::VecDeque;
 
 use bevy::prelude::*;
 
-use crate::{GeneratedItem, Scroller, ScrollerGenerator, ScrollerItem};
+use crate::{GeneratedItem, Scroller};
+
+use super::generator::ScrollerGenerator;
 
 #[derive(Debug)]
 pub struct SpriteSheetScrollerItem {
@@ -24,8 +26,8 @@ pub struct SequenceSpriteSheetGenerator {
 }
 
 impl ScrollerGenerator for SequenceSpriteSheetGenerator {
-  type I = SpriteSheetScrollerItem;
-  fn gen_item(&mut self) -> Self::I {
+  type Item = SpriteSheetScrollerItem;
+  fn gen_item(&mut self) -> Self::Item {
     self.sprites.rotate_left(1);
 
     SpriteSheetScrollerItem {
@@ -41,10 +43,10 @@ pub fn spritesheet_spawner(
   input.into_iter().for_each(|(entity, _, item)| {
     let generator = q_gen.get(entity).unwrap();
     commands.spawn((
-      ScrollerItem {
-        size: item.size(),
-        parent: entity,
-      },
+      // Item {
+      //   size: item.size(),
+      //   // parent: entity,
+      // },
       SpriteBundle {
         texture: generator.texture.clone(),
         visibility: Visibility::Hidden,

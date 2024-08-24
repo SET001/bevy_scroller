@@ -2,42 +2,46 @@ use std::fmt::Debug;
 
 use bevy::prelude::*;
 
-use crate::Scroller;
+use crate::{Scroller, ScrollerItem, Size};
 
 pub trait GeneratedItem: Debug {
   fn size(&self) -> Vec2;
 }
-pub trait ScrollerGenerator: Default {
-  type I: GeneratedItem + Debug;
-  fn gen_item(&mut self) -> Self::I;
+pub trait ScrollerGenerator {
+  type Item: GeneratedItem + Debug;
+  fn gen_item(&mut self) -> Self::Item;
 }
 
-pub type SpawnerInput<T> = Vec<(Entity, Scroller, Box<<T as ScrollerGenerator>::I>)>;
+pub type SpawnerInput<I> = (Entity, Vec<I>);
 
-const GENERATIONS_LIMIT: u32 = 300;
-
-pub fn pre_generator<T>(mut q_scroller: Query<(Entity, &Scroller, &mut T)>) -> SpawnerInput<T>
+pub fn pre_generator<G>(
+  In(entity): In<Entity>,
+  mut query: Query<(&mut G, &Scroller, &Size)>,
+  q_item: Query<(&Transform, &ScrollerItem)>,
+) -> SpawnerInput<G::Item>
 where
-  T: ScrollerGenerator + Component + Clone,
+  G: ScrollerGenerator + Component + Clone,
 {
-  q_scroller
-    .iter_mut()
-    .flat_map(|(entity, scroller, mut generator)| {
-      let mut length = scroller.get_free_space();
-      let mut generations = 0;
-      let mut to_generate = vec![];
-      while length > 0. && generations <= GENERATIONS_LIMIT {
-        let item = generator.gen_item();
-        trace!("generated item is: {:?}", item);
-        length -= item.size().x;
-        generations += 1;
-        to_generate.push((entity, scroller.clone(), Box::new(item)));
+  let items = if let Ok((mut generator, scroller, size)) = query.get_mut(entity) {
+    let edge = match scroller.last_item {
+      Some(last_item) => {
+        let (position, item) = q_item.get(last_item).unwrap();
+        position.translation.x + item.size.x / 2.
       }
-      if generations > GENERATIONS_LIMIT {
-        panic!("Reached item generation limit");
-      }
-
-      to_generate
-    })
-    .collect()
+      None => 0.,
+    };
+    let mut free_space = size.x - edge;
+    // let mut width = scroller.items_width;
+    let mut items = vec![];
+    while free_space > 0. {
+      let item = generator.gen_item();
+      // width += item.size().x;
+      free_space -= item.size().x;
+      items.push(item);
+    }
+    items
+  } else {
+    vec![]
+  };
+  (entity, items)
 }

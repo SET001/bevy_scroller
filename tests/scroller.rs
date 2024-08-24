@@ -13,10 +13,10 @@ impl GeneratedItem for FooItem {
   }
 }
 impl ScrollerGenerator for FooGenerator {
-  type I = FooItem;
+  type Item = FooItem;
 
-  fn gen_item(&mut self) -> Self::I {
-    Self::I {}
+  fn gen_item(&mut self) -> Self::Item {
+    Self::Item {}
   }
 }
 

@@ -1,9 +1,16 @@
+use std::default;
+
+use crate::{scroller, GeneratedItem, ScrollerGenerator, ScrollerGenerators};
 use bevy::{
-  ecs::system::SystemId,
+  ecs::{
+    component::StorageType,
+    system::{RunSystemOnce, SystemId},
+    world,
+  },
   prelude::*,
   reflect::Reflect,
   render::{
-    camera::{RenderTarget, Viewport},
+    camera::RenderTarget,
     render_resource::{
       Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
@@ -11,98 +18,53 @@ use bevy::{
   },
 };
 
-use crate::ScrollerGenerator;
+const SCROLLER_ITEM_RENDER_LAYER: usize = 1596;
 
-#[cfg(feature = "dev")]
-use bevy::color::palettes::basic::*;
-
-#[derive(Reflect, Default, Debug, Clone)]
-pub enum ScrollerDirection {
+#[derive(Reflect, Default, Debug, Clone, Component)]
+pub enum Direction {
   #[default]
   Forward,
   Backward,
 }
+#[derive(Copy, Clone, Default, Component, Reflect, Deref, DerefMut)]
+pub struct Size(pub Vec2);
 
-impl ScrollerDirection {
-  pub fn as_f32(&self) -> f32 {
-    (*self).clone().into()
+impl From<Vec2> for Size {
+  fn from(value: Vec2) -> Self {
+    Self(value)
   }
 }
 
-impl From<ScrollerDirection> for f32 {
-  fn from(value: ScrollerDirection) -> Self {
-    match value {
-      ScrollerDirection::Forward => 1.,
-      ScrollerDirection::Backward => -1.,
-    }
-  }
-}
-#[derive(Copy, Clone, Component)]
-pub struct ScrollerItem {
-  pub size: Vec2,
-  pub parent: Entity,
+#[derive(Component, Default)]
+pub enum FillMode {
+  #[default]
+  Filled,
+  NotFilled,
 }
 
-#[derive(Component)]
-pub struct OnScrollerInit(pub SystemId<Entity>);
+type Generator = SystemId<f32>;
 
-#[derive(Copy, Clone, Default, Component, Reflect)]
-pub struct ScrollerSize {
-  pub size: Vec2,
-}
-
-#[derive(Default, Debug, Component, Clone, Reflect)]
-#[reflect(Component, Default)]
+#[derive(Debug, Component, Clone, Reflect)]
+// #[reflect(Component)]
 pub struct Scroller {
-  pub start: f32,
-  pub end: f32,
   pub speed: f32,
-  pub direction: ScrollerDirection,
   pub is_paused: bool,
-  pub spawn_edge: f32,
-  pub render_layer: Option<usize>,
-  pub texture_handle: Handle<Image>,
+  // items: Vec<Item>,
+  pub items_width: f32,
+  pub last_item: Option<Entity>,
 }
 
 impl Scroller {
-  pub fn get_free_space(&self) -> f32 {
-    (self.start - self.spawn_edge) * -self.direction.as_f32()
-  }
-
-  pub fn new_item_needed(&self) -> bool {
-    self.get_free_space() > self.speed * 3.
-  }
-
-  pub fn get_next_item_position(&self, item: &ScrollerItem) -> Vec2 {
-    Vec2 {
-      x: self.spawn_edge - item.size.x / 2. * self.direction.as_f32(),
-      ..default()
-    }
-  }
-}
-
-#[derive(Component, Debug)]
-pub struct NeedInitialFilling;
-#[derive(Bundle)]
-pub struct ScrollerBundle<G: ScrollerGenerator + Send + Sync + Component> {
-  pub scroller: Scroller,
-  pub spatial: SpatialBundle,
-  pub generator: G,
-}
-
-impl<G: ScrollerGenerator + Send + Sync + Component> Default for ScrollerBundle<G> {
-  fn default() -> Self {
+  pub fn new(speed: f32) -> Self {
     Self {
-      scroller: Scroller::default(),
-      generator: G::default(),
-      spatial: SpatialBundle {
-        visibility: Visibility::Hidden,
-        ..default()
-      },
+      speed,
+      // items: vec![],
+      items_width: 0.,
+      is_paused: false,
+      last_item: None,
     }
   }
 }
-
 pub struct UnnamedScrollerIndex(pub u32);
 impl Default for UnnamedScrollerIndex {
   fn default() -> Self {
@@ -110,47 +72,157 @@ impl Default for UnnamedScrollerIndex {
   }
 }
 
-pub fn init(
-  mut scroller_index: Local<UnnamedScrollerIndex>,
+#[derive(Copy, Clone, Debug, Reflect)]
+pub struct ScrollerItem {
+  pub size: Vec2,
+  pub parent: Entity,
+  limit_position: f32,
+}
+
+impl ScrollerItem {
+  pub fn new(size: Vec2, parent: Entity) -> Self {
+    Self {
+      size,
+      parent,
+      limit_position: 0.,
+    }
+  }
+}
+
+impl Component for ScrollerItem {
+  const STORAGE_TYPE: bevy::ecs::component::StorageType = StorageType::Table;
+  fn register_component_hooks(hooks: &mut bevy::ecs::component::ComponentHooks) {
+    // hooks.on_add(|mut world, entity, _component_id| {
+    //   // world.reborrow().query(state)
+    //   // let state = QueryState::<&Transform>::new(world.reborrow());
+
+    //   let item = world.get::<ScrollerItem>(entity).unwrap().clone();
+
+    //   // let asd = world.reborrow().query(&mut state).get(item.parent);
+
+    //   let size = world.get::<Size>(item.parent).unwrap().x;
+    //   let mut scroller = world.get_mut::<Scroller>(item.parent).unwrap();
+    //   let new_width = scroller.items_width + item.size.x;
+    //   scroller.items_width += new_width;
+    //   info!(
+    //     "scroller items_width increased to: {}",
+    //     scroller.items_width
+    //   );
+    //   // let mut transform = world.get_mut::<Transform>(entity).unwrap();
+    //   // transform.translation.x = size / 2. - new_width;
+    // });
+
+    hooks.on_remove(|mut world, entity, _component_id| {
+      let item = world.get::<ScrollerItem>(entity).unwrap().clone();
+      let mut scroller = world.get_mut::<Scroller>(item.parent).unwrap();
+      scroller.items_width -= item.size.x;
+      info!(
+        "scroller items_width decreased to: {}",
+        scroller.items_width
+      );
+    });
+  }
+}
+
+fn get_item_position() {}
+
+pub fn on_add(
+  trigger: Trigger<OnAdd, ScrollerItem>,
   mut commands: Commands,
+  mut q_item: Query<(&mut ScrollerItem, &Transform)>,
+  mut q_scroller: Query<(&mut Scroller, &Size)>,
+) {
+  info!("OnAdd trigger for ScrollerItem");
+  info!("render layers: {}", std::usize::MAX);
+
+  let (mut item, _) = q_item.get_mut(trigger.entity()).unwrap();
+  let (mut scroller, size) = q_scroller.get_mut(item.parent).unwrap();
+  // commands.entity(item.parent).add_child(trigger.entity());``
+  item.limit_position = -(size.x + item.size.x) / 2.;
+  let item_size = item.size.clone();
+  commands.entity(item.parent).add_child(trigger.entity());
+  scroller.items_width += item.size.x;
+
+  let position = match scroller.last_item {
+    Some(last_item) => {
+      let (last_item, transform) = q_item.get(last_item).unwrap();
+      transform.translation.x + (last_item.size.x + item_size.x) / 2.
+    }
+    None => -(size.x - item.size.x) / 2.,
+  };
+
+  commands.entity(trigger.entity()).insert((
+    Name::new("Scroller item"),
+    Transform::from_translation(Vec2::new(position, 0.).extend(0.)),
+    RenderLayers::none().with(SCROLLER_ITEM_RENDER_LAYER),
+  ));
+
+  info!("scroller position calculated to be: {position}",);
+
+  info!(
+    "scroller items_width increased to: {}",
+    scroller.items_width
+  );
+  scroller.last_item = Some(trigger.entity());
+}
+
+#[derive(Component)]
+pub struct ScrollerSpawner(pub SystemId<Entity>);
+
+#[derive(Bundle)]
+pub struct ScrollerBundle<G>
+where
+  G: Component + ScrollerGenerator,
+{
+  pub scroller: Scroller,
+  pub size: Size,
+  pub direction: Direction,
+  pub spatial: SpatialBundle,
+  pub generator: G,
+  pub spawner: ScrollerSpawner,
+  pub fill_mode: FillMode,
+}
+
+#[derive(Event)]
+pub struct FillScroller;
+
+pub fn init(
+  mut commands: Commands,
+  mut scroller_index: Local<UnnamedScrollerIndex>,
+  mut images: ResMut<Assets<Image>>,
   mut q_added_scroller: Query<
     (
       Entity,
       &mut Scroller,
-      &ScrollerSize,
       Option<&Name>,
-      &Transform,
+      Option<&Direction>,
+      Option<&Size>,
     ),
-    Added<ScrollerSize>,
+    Added<Scroller>,
   >,
-  mut images: ResMut<Assets<Image>>,
 ) {
-  for (entity, mut scroller, scroller_size, maybe_name, transform) in q_added_scroller.iter_mut() {
-    let name = match maybe_name {
-      Some(name) => name.to_string(),
-      None => {
-        let name = format!("Scroller #{}", scroller_index.0);
-        commands.entity(entity).insert(Name::new(name.clone()));
-        scroller_index.0 += 1;
-        name
-      }
-    };
-    commands.entity(entity).insert(SpatialBundle {
-      transform: *transform,
-      ..Default::default()
-    });
+  for (entity, mut scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
+  {
+    if maybe_direction.is_none() {
+      warn!("Scroller without direction");
+    }
+    if maybe_size.is_none() {
+      warn!("Scroller without size");
+    }
+    if let (Some(direction), Some(size)) = (maybe_direction, maybe_size) {
+      let name = match maybe_name {
+        Some(name) => name.to_string(),
+        None => {
+          let name = format!("Scroller #{}", scroller_index.0);
+          commands.entity(entity).insert(Name::new(name.clone()));
+          scroller_index.0 += 1;
+          name
+        }
+      };
 
-    debug!("Init scroller: {name}");
-
-    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
-    scroller.start = -scroller.end;
-    scroller.spawn_edge = scroller.end;
-    commands.entity(entity).insert(NeedInitialFilling);
-
-    if let Some(render_layer) = scroller.render_layer {
       let size = Extent3d {
-        width: scroller_size.size.x as u32,
-        height: scroller_size.size.y as u32,
+        width: size.x as u32,
+        height: size.y as u32,
         ..default()
       };
 
@@ -169,217 +241,76 @@ pub fn init(
         },
         ..default()
       };
-
       image.resize(size);
-      let image_handle = images.add(image); //  TODO: remove it on cleanup
-      scroller.texture_handle = image_handle.clone();
+      let image_handle = images.add(image);
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
           Camera2dBundle {
             camera: Camera {
-              viewport: Some(Viewport {
-                physical_size: scroller_size.size.as_uvec2(),
-                ..Default::default()
-              }),
+              // render before the "main pass" camera
               order: -1,
               target: RenderTarget::Image(image_handle.clone()),
               ..default()
             },
             ..default()
           },
-          RenderLayers::layer(render_layer),
-          Name::new("Scroller Camera"),
+          // InGameCamera,
+          RenderLayers::none().with(SCROLLER_ITEM_RENDER_LAYER),
         ));
         parent.spawn((
           SpriteBundle {
             texture: image_handle,
-            ..Default::default()
+            ..default()
           },
-          Name::new("Scroller Camera texture"),
+          Name::new("Scroller texture"),
         ));
       });
     }
   }
 }
 
-pub fn on_scroller_resize(
-  mut q_size_changed: Query<(&mut Scroller, &ScrollerSize), Changed<ScrollerSize>>,
-) {
-  for (mut scroller, scroller_size) in q_size_changed.iter_mut() {
-    info!("item resized");
-    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
-    scroller.start = -scroller.end;
-    scroller.spawn_edge = scroller.end;
-  }
-}
-
-pub fn on_items_added(
+pub fn fill_items(
   mut commands: Commands,
-  mut q_added: Query<(&ScrollerItem, &mut Transform, &mut Visibility, Entity), Added<ScrollerItem>>,
-  mut q_scroller: Query<(&mut Scroller, Entity)>,
+  q_scroller: Query<(Entity, &mut Scroller, &Size, &ScrollerSpawner)>,
+  q_item: Query<(&Transform, &ScrollerItem)>,
 ) {
-  for (scroller_item, mut transform, mut visibility, scroller_item_entity) in q_added.iter_mut() {
-    if let Ok((mut scroller, scroller_entity)) = q_scroller.get_mut(scroller_item.parent) {
-      let translation = scroller.get_next_item_position(scroller_item).extend(0.);
-
-      transform.translation = translation;
-      *visibility = Visibility::Inherited;
-      if let Some(render_layer) = scroller.render_layer {
-        commands
-          .entity(scroller_item_entity)
-          .insert(RenderLayers::layer(render_layer));
+  for (entity, scroller, size, spawner) in q_scroller.iter() {
+    let edge = match scroller.last_item {
+      Some(last_item) => {
+        let (position, item) = q_item.get(last_item).unwrap();
+        position.translation.x + item.size.x / 2.
       }
-
-      scroller.spawn_edge -= scroller_item.size.x * scroller.direction.as_f32();
-
-      commands
-        .entity(scroller_entity)
-        .add_child(scroller_item_entity);
+      None => 0.,
+    };
+    let free_space = size.x - edge;
+    if free_space > 0. {
+      commands.run_system_with_input(spawner.0, entity);
     }
-  }
-}
-
-#[cfg(feature = "dev")]
-pub fn scroller_debug(
-  q_scroller_item: Query<(&GlobalTransform, &ScrollerItem, Option<&Visibility>)>,
-  q_scroller: Query<(&GlobalTransform, &Scroller, &ScrollerSize)>,
-  mut gizmos: Gizmos,
-) {
-  use bevy::color::palettes::css::BLUE;
-
-  for (global_transform, item, visibility) in q_scroller_item.iter() {
-    if let Some(visibility) = visibility {
-      if visibility != Visibility::Hidden {
-        let (scale, rotation, translation) = global_transform.to_scale_rotation_translation();
-
-        gizmos.rect_2d(
-          translation.truncate(),
-          rotation.to_axis_angle().1,
-          item.size * scale.truncate(),
-          BLUE,
-        );
-      }
-    }
-  }
-  for (global_transform, scroller, scroller_size) in q_scroller.iter() {
-    let (scale, rotation, translation) = global_transform.to_scale_rotation_translation();
-
-    gizmos.line_2d(
-      Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
-      Vec2::new(scroller.spawn_edge, scroller_size.size.y / 2. + 20.) * scale.truncate(), //  TODO: take rotation into account
-      RED,
-    );
-    gizmos.rect_2d(
-      translation.truncate(),
-      rotation.to_axis_angle().1,
-      Vec2::new(scroller_size.size.x, scroller_size.size.y) * scale.truncate(),
-      GREEN,
-    );
-    // gizmos.line_2d(
-    //   Vec2::new(position.x, scroller.rect.min.y),
-    //   Vec2::new(position.x, scroller.rect.max.y),
-    //   Color::WHITE,
-    // );
   }
 }
 
 pub fn update(
-  mut commands: Commands,
-  mut q_scroller: Query<(
-    &mut Scroller,
-    &mut Visibility,
-    Option<&NeedInitialFilling>,
-    Option<&OnScrollerInit>,
-    Entity,
-  )>,
-  mut q_item: Query<(&mut Transform, Entity, &ScrollerItem)>,
+  q_scroller: Query<(&Scroller, &Children)>,
+  mut q_item: Query<(&mut Transform)>,
   time_fixed: Res<Time<Virtual>>,
 ) {
   let step: f32 = 1. / 60.;
   let delta = time_fixed.delta_seconds();
-
-  for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in
-    q_scroller.iter_mut()
-  {
-    if maybe_need_filling.is_some() && !scroller.new_item_needed() {
-      *visibility = Visibility::Inherited;
-      commands
-        .entity(scroller_entity)
-        .remove::<NeedInitialFilling>();
-      if let Some(on_init) = maybe_on_init {
-        commands.run_system_with_input(on_init.0, scroller_entity);
-      }
-    }
-    if !scroller.is_paused {
-      let update_step = delta / step * scroller.speed * scroller.direction.as_f32();
-
-      scroller.spawn_edge += update_step;
-      q_item
-        .iter_mut()
-        .filter(|(_, _, item)| item.parent == scroller_entity)
-        .for_each(|(mut transform, _, _)| {
-          transform.translation.x += update_step;
-        })
+  for (scroller, children) in q_scroller.iter() {
+    for child in children.iter() {
+      if let Ok(mut transform) = q_item.get_mut(*child) {
+        let update_step = delta / step * scroller.speed;
+        transform.translation.x -= update_step;
+      };
     }
   }
 }
 
-pub fn delete_items(
-  mut commands: Commands,
-  q_scroller_item: Query<(&ScrollerItem, Entity, &Transform)>,
-  q_scroller: Query<&Scroller>,
-) {
-  for (scroller_item, entity, transform) in q_scroller_item.iter() {
-    if let Ok(scroller) = q_scroller.get(scroller_item.parent) {
-      if (scroller.end - transform.translation.x
-        + scroller_item.size.x / 2. * scroller.direction.as_f32())
-        * scroller.direction.as_f32()
-        < 0.
-      {
-        commands.entity(entity).despawn_recursive();
-      }
+pub fn delete(q_item: Query<(&Transform, Entity, &ScrollerItem)>, mut commands: Commands) {
+  for (item_transform, entity, item) in q_item.iter() {
+    if item_transform.translation.x < item.limit_position {
+      commands.entity(entity).despawn_recursive();
     }
   }
-}
-
-#[cfg(test)]
-mod test {
-  // use crate::{Scroller, ScrollerItem};
-  // use bevy::prelude::*;
-  // use rstest::rstest;
-
-  // #[rstest]
-  // #[case(0., 30., Vec2::new(-5.0, 0.))]
-  // #[case(10., 0., Vec2::new(15.0, 0.))]
-  // #[case(65., 0., Vec2::new(-40.0, 0.))]
-  // // #[case(65., 30., Vec2::new(25.0, 0.))]
-  // fn get_inserted_item_position_test(
-  //   #[case] end: f32,
-  //   #[case] scroll: f32,
-  //   #[case] expectation: Vec2,
-  // ) {
-  //   let scroller = Scroller {
-  //     rect: Rect::from_center_size(Vec2::new(0., 0.), Vec2::new(80., 80.)),
-  //     scroll,
-  //     end,
-  //     ..default()
-  //   };
-  //   // let position = scroller.get_next_item_position(&ScrollerItem { size: 30. });
-  //   // assert_eq!(position, expectation);
-  // }
-
-  // #[rstest]
-  // #[case(0., 30., true)]
-  // #[case(10., 0., true)]
-  // #[case(65., 0., true)]
-  // fn should_add_new_item_test(#[case] end: f32, #[case] scroll: f32, #[case] expectation: bool) {
-  //   let scroller = Scroller {
-  //     rect: Rect::from_center_size(Vec2::new(0., 0.), Vec2::new(80., 80.)),
-  //     scroll,
-  //     end,
-  //     ..default()
-  //   };
-  //   assert_eq!(scroller.should_insert_next_item(), expectation);
-  // }
 }
