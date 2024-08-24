@@ -1,12 +1,6 @@
-use std::default;
-
-use crate::{scroller, GeneratedItem, ScrollerGenerator, ScrollerGenerators};
+use crate::ScrollerGenerator;
 use bevy::{
-  ecs::{
-    component::StorageType,
-    system::{RunSystemOnce, SystemId},
-    world,
-  },
+  ecs::{component::StorageType, system::SystemId},
   prelude::*,
   reflect::Reflect,
   render::{
@@ -42,10 +36,7 @@ pub enum FillMode {
   NotFilled,
 }
 
-type Generator = SystemId<f32>;
-
 #[derive(Debug, Component, Clone, Reflect)]
-// #[reflect(Component)]
 pub struct Scroller {
   pub speed: f32,
   pub is_paused: bool,
@@ -92,39 +83,13 @@ impl ScrollerItem {
 impl Component for ScrollerItem {
   const STORAGE_TYPE: bevy::ecs::component::StorageType = StorageType::Table;
   fn register_component_hooks(hooks: &mut bevy::ecs::component::ComponentHooks) {
-    // hooks.on_add(|mut world, entity, _component_id| {
-    //   // world.reborrow().query(state)
-    //   // let state = QueryState::<&Transform>::new(world.reborrow());
-
-    //   let item = world.get::<ScrollerItem>(entity).unwrap().clone();
-
-    //   // let asd = world.reborrow().query(&mut state).get(item.parent);
-
-    //   let size = world.get::<Size>(item.parent).unwrap().x;
-    //   let mut scroller = world.get_mut::<Scroller>(item.parent).unwrap();
-    //   let new_width = scroller.items_width + item.size.x;
-    //   scroller.items_width += new_width;
-    //   info!(
-    //     "scroller items_width increased to: {}",
-    //     scroller.items_width
-    //   );
-    //   // let mut transform = world.get_mut::<Transform>(entity).unwrap();
-    //   // transform.translation.x = size / 2. - new_width;
-    // });
-
     hooks.on_remove(|mut world, entity, _component_id| {
       let item = world.get::<ScrollerItem>(entity).unwrap().clone();
       let mut scroller = world.get_mut::<Scroller>(item.parent).unwrap();
       scroller.items_width -= item.size.x;
-      info!(
-        "scroller items_width decreased to: {}",
-        scroller.items_width
-      );
     });
   }
 }
-
-fn get_item_position() {}
 
 pub fn on_add(
   trigger: Trigger<OnAdd, ScrollerItem>,
