@@ -260,11 +260,13 @@ pub fn update(
   let step: f32 = 1. / 60.;
   let delta = time_fixed.delta_seconds();
   for (scroller, children) in q_scroller.iter() {
-    for child in children.iter() {
-      if let Ok(mut transform) = q_item.get_mut(*child) {
-        let update_step = delta / step * scroller.speed;
-        transform.translation.x -= update_step;
-      };
+    if !scroller.is_paused {
+      for child in children.iter() {
+        if let Ok(mut transform) = q_item.get_mut(*child) {
+          let update_step = delta / step * scroller.speed;
+          transform.translation.x -= update_step;
+        };
+      }
     }
   }
 }
