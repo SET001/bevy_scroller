@@ -1,37 +1,21 @@
-#[derive(Resource)]
-pub struct ScrollerPluginConfig {
-  render_layers_range: Range<i32>,
-}
-
-pub struct ScrollerPlugin {
-  pub render_layers_range: Range<i32>,
-}
-
-impl Default for ScrollerPlugin {
-  fn default() -> Self {
-    Self {
-      render_layers_range: 1000..9999,
-    }
-  }
-}
-
-use std::ops::Range;
+pub struct ScrollerPlugin;
 
 use crate::{
-  scroller::*, sprite_spawner, ScrollerApp,
-  ScrollerGenerators, SequenceSpriteSheetGenerator, SingleSpriteGenerator,
+  scroller::*, sprite_spawner, ScrollerApp, ScrollerGenerators, SequenceSpriteSheetGenerator,
+  SingleSpriteGenerator,
 };
 use bevy::prelude::*;
+use bevy_render_layers_manager::RenderLayersManagerPlugin;
 
 // #[cfg(feature = "dev")]
 // use crate::scroller::scroller_debug;
 
 impl Plugin for ScrollerPlugin {
   fn build(&self, app: &mut App) {
+    if !app.is_plugin_added::<RenderLayersManagerPlugin>() {
+      app.add_plugins(RenderLayersManagerPlugin);
+    }
     app
-      .insert_resource(ScrollerPluginConfig {
-        render_layers_range: self.render_layers_range.clone(),
-      })
       // .register_type::<Scroller>()
       .register_type::<Size>()
       .register_type::<Direction>()

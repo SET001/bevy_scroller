@@ -15,7 +15,7 @@ pub fn get_app(title: String) -> App {
 
         ..default()
       }),
-      ScrollerPlugin::default(),
+      ScrollerPlugin,
     ))
     .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
     .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)

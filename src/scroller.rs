@@ -11,8 +11,7 @@ use bevy::{
     view::RenderLayers,
   },
 };
-
-const SCROLLER_ITEM_RENDER_LAYER: usize = 1596;
+use bevy_render_layers_manager::RenderLayerManager;
 
 #[derive(Reflect, Default, Debug, Clone, Component)]
 pub enum Direction {
@@ -43,6 +42,7 @@ pub struct Scroller {
   // items: Vec<Item>,
   pub items_width: f32,
   pub last_item: Option<Entity>,
+  render_layer: usize,
 }
 
 impl Scroller {
@@ -53,6 +53,7 @@ impl Scroller {
       items_width: 0.,
       is_paused: false,
       last_item: None,
+      render_layer: 0,
     }
   }
 }
@@ -97,9 +98,6 @@ pub fn on_add(
   mut q_item: Query<(&mut ScrollerItem, &Transform)>,
   mut q_scroller: Query<(&mut Scroller, &Size)>,
 ) {
-  info!("OnAdd trigger for ScrollerItem");
-  info!("render layers: {}", std::usize::MAX);
-
   let (mut item, _) = q_item.get_mut(trigger.entity()).unwrap();
   let (mut scroller, size) = q_scroller.get_mut(item.parent).unwrap();
   // commands.entity(item.parent).add_child(trigger.entity());``
@@ -119,7 +117,7 @@ pub fn on_add(
   commands.entity(trigger.entity()).insert((
     Name::new("Scroller item"),
     Transform::from_translation(Vec2::new(position, 0.).extend(0.)),
-    RenderLayers::none().with(SCROLLER_ITEM_RENDER_LAYER),
+    RenderLayers::from_layers(&[scroller.render_layer]),
   ));
 
   info!("scroller position calculated to be: {position}",);
@@ -165,8 +163,10 @@ pub fn init(
     ),
     Added<Scroller>,
   >,
+  render_manager: Res<RenderLayerManager>,
 ) {
-  for (entity, scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut() {
+  for (entity, mut scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
+  {
     if maybe_direction.is_none() {
       warn!("Scroller without direction");
     }
@@ -204,6 +204,8 @@ pub fn init(
       image.resize(size);
       let image_handle = images.add(image);
 
+      scroller.render_layer = render_manager.get();
+
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
           Camera2dBundle {
@@ -216,7 +218,7 @@ pub fn init(
             ..default()
           },
           // InGameCamera,
-          RenderLayers::none().with(SCROLLER_ITEM_RENDER_LAYER),
+          RenderLayers::from_layers(&[scroller.render_layer]),
         ));
         parent.spawn((
           SpriteBundle {
