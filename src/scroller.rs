@@ -35,11 +35,10 @@ pub enum FillMode {
   NotFilled,
 }
 
-#[derive(Debug, Component, Clone, Reflect)]
+#[derive(Debug, Default, Component, Clone, Reflect)]
 pub struct Scroller {
   pub speed: f32,
   pub is_paused: bool,
-  // items: Vec<Item>,
   pub items_width: f32,
   pub last_item: Option<Entity>,
   render_layer: usize,
@@ -49,7 +48,6 @@ impl Scroller {
   pub fn new(speed: f32) -> Self {
     Self {
       speed,
-      // items: vec![],
       items_width: 0.,
       is_paused: false,
       last_item: None,
@@ -132,7 +130,7 @@ pub fn on_add(
 #[derive(Component)]
 pub struct ScrollerSpawner(pub SystemId<Entity>);
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 pub struct ScrollerBundle<G>
 where
   G: Component + ScrollerGenerator,
@@ -142,7 +140,7 @@ where
   pub direction: Direction,
   pub spatial: SpatialBundle,
   pub generator: G,
-  pub spawner: ScrollerSpawner,
+  // pub spawner: ScrollerSpawner,
   pub fill_mode: FillMode,
 }
 
@@ -163,7 +161,7 @@ pub fn init(
     ),
     Added<Scroller>,
   >,
-  render_manager: Res<RenderLayerManager>,
+  mut render_manager: ResMut<RenderLayerManager>,
 ) {
   for (entity, mut scroller, maybe_name, maybe_direction, maybe_size) in q_added_scroller.iter_mut()
   {
@@ -204,7 +202,7 @@ pub fn init(
       image.resize(size);
       let image_handle = images.add(image);
 
-      scroller.render_layer = render_manager.get();
+      scroller.render_layer = render_manager.pick();
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((

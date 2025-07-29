@@ -6,7 +6,7 @@ use crate::{pre_generator, ScrollerGenerator, SpawnerInput};
 
 #[derive(Resource, Default)]
 pub struct ScrollerGenerators {
-  generators: HashMap<TypeId, SystemId<Entity>>,
+  pub generators: HashMap<TypeId, SystemId<Entity>>,
 }
 
 impl ScrollerGenerators {
@@ -26,13 +26,14 @@ pub trait ScrollerApp {
   ) -> &mut Self;
 }
 
+pub fn spawner() {}
 impl ScrollerApp for App {
-  fn add_scroller_generator<T, M, S>(&mut self, system: S) -> &mut Self
+  fn add_scroller_generator<T, M, G>(&mut self, generator: G) -> &mut Self
   where
     T: ScrollerGenerator + Component + Clone,
-    S: IntoSystem<SpawnerInput<T::Item>, (), M>,
+    G: IntoSystem<SpawnerInput<T::Item>, (), M>,
   {
-    let registered_system = self.register_system(pre_generator::<T>.pipe(system));
+    let registered_system = self.register_system(pre_generator::<T>.pipe(spawner));
 
     let mut generators = self.world_mut().resource_mut::<ScrollerGenerators>();
     generators

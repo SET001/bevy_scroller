@@ -1,4 +1,5 @@
 use bevy::{prelude::*, window::WindowResized};
+use bevy_render_layers_manager::RenderLayersManagerPlugin;
 use bevy_scroller::{ScrollerPlugin, Size};
 use iyes_perf_ui::prelude::*;
 
@@ -8,7 +9,7 @@ pub fn get_app(title: String) -> App {
     .add_plugins((
       DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-          // present_mode: bevy::window::PresentMode::AutoNoVsync,
+          present_mode: bevy::window::PresentMode::AutoNoVsync,
           title: format!("BEVY_SCROLLER example: {}", title),
           ..default()
         }),
@@ -33,6 +34,7 @@ pub fn get_app(title: String) -> App {
 
 fn default_start(mut commands: Commands) {
   commands.spawn(PerfUiCompleteBundle::default());
+  // commands.spawn(PerfUiDefaultEntries::default());
 }
 
 fn on_resize(mut resize_reader: EventReader<WindowResized>, mut scroller_size: Query<&mut Size>) {

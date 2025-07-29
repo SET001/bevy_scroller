@@ -77,19 +77,18 @@ pub fn sprite_spawner(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
 ) {
-  info!(
-    "sprite spawner to generate {:?} items",
-    items.len()
-  );
-  items.iter().for_each(|item| {
-    commands.spawn((
-      ScrollerItem::new(item.size(), entity),
-      SpriteBundle {
-        texture: item.texture.clone(),
-        ..default()
-      },
-    ));
-  });
+  if items.len() > 0 {
+    info!("sprite spawner to generate {:?} items", items.len());
+    items.iter().for_each(|item| {
+      commands.spawn((
+        ScrollerItem::new(item.size(), entity),
+        SpriteBundle {
+          texture: item.texture.clone(),
+          ..default()
+        },
+      ));
+    });
+  }
   // input.into_iter().for_each(|(entity, _, item)| {
   //   let handle = asset_server.load(item.path.clone());
   //   commands.spawn((

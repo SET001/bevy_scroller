@@ -26,7 +26,6 @@ pub fn start(
         texture: asset_server.load("bevy_logo.png"),
         size: sprite_size,
       },
-      spawner: ScrollerSpawner(*spawners.get::<SingleSpriteGenerator>().unwrap()),
       direction: Direction::default(),
       fill_mode: FillMode::default(),
       spatial: SpatialBundle::default(),

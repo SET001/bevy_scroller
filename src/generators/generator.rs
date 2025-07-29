@@ -1,8 +1,8 @@
-use std::fmt::Debug;
+use std::{any::TypeId, fmt::Debug};
 
-use bevy::prelude::*;
+use bevy::{ecs::world, prelude::*};
 
-use crate::{Scroller, ScrollerItem, Size};
+use crate::{Scroller, ScrollerGenerators, ScrollerItem, Size};
 
 pub trait GeneratedItem: Debug {
   fn size(&self) -> Vec2;
@@ -14,11 +14,28 @@ pub trait ScrollerGenerator {
 
 pub type SpawnerInput<I> = (Entity, Vec<I>);
 
-pub fn pre_generator<G>(
+pub fn spawner() -> Box<Vec<impl Bundle>> {
+  Box::new(vec![{}])
+}
+
+pub fn gen<G: 'static>(world: &mut World) {
+  if let Some(generator) = world
+    .get_resource_ref::<ScrollerGenerators>()
+    .unwrap()
+    .generators
+    .get(&TypeId::of::<G>())
+  {
+    let spid = world.register_system(spawner);
+    let asd = world.run_system(spid).unwrap();
+    world.spawn_batch(asd.into_iter());
+  }
+}
+pub fn generator<G>(
   In(entity): In<Entity>,
   mut query: Query<(&mut G, &Scroller, &Size)>,
   q_item: Query<(&Transform, &ScrollerItem)>,
-) -> SpawnerInput<G::Item>
+  generators: Res<ScrollerGenerators>,
+) -> Box<Vec<impl Bundle>>
 where
   G: ScrollerGenerator + Component + Clone,
 {
@@ -33,11 +50,13 @@ where
     let mut free_space = size.x - edge;
     // let mut width = scroller.items_width;
     let mut items = vec![];
-    while free_space > 0. {
-      let item = generator.gen_item();
-      // width += item.size().x;
-      free_space -= item.size().x;
-      items.push(item);
+    if let Some(generator) = generators.generators.get(&TypeId::of::<G>()) {
+      while free_space > 0. {
+        world.run_system_once(generator).unwrap();
+        // width += item.size().x;
+        free_space -= item.size().x;
+        items.push(item);
+      }
     }
     items
   } else {

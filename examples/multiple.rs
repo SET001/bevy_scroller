@@ -25,7 +25,7 @@ pub fn start(
       scroller: Scroller::new(5.),
       size: Vec2::new(1000., sprite_size.y).into(),
       generator: SingleSpriteGenerator {
-        texture: asset_server.load("gems/1.png"),
+        texture: asset_server.load("bevy_logo.png"),
         size: sprite_size,
       },
       spawner: ScrollerSpawner(*spawners.get::<SingleSpriteGenerator>().unwrap()),
