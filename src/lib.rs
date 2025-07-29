@@ -4,6 +4,7 @@ mod generators;
 mod plugin;
 mod scroller;
 mod scroller_app;
+mod spawners;
 
 pub use generators::*;
 pub use plugin::ScrollerPlugin;

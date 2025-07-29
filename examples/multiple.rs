@@ -1,61 +1,56 @@
 mod shared;
 
-use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{Scroller, ScrollerBundle, ScrollerSize, SingleSpriteGenerator};
+use bevy::prelude::*;
+use bevy_scroller::{
+  Direction, FillMode, Scroller, ScrollerBundle, ScrollerGenerators, ScrollerSpawner,
+  SingleSpriteGenerator,
+};
 use shared::get_app;
-use std::f32::consts::PI;
 
 fn main() {
   get_app("multiple".into()).add_systems(Startup, start).run();
 }
 
-pub fn start(mut commands: Commands, windows: Query<&Window, With<PrimaryWindow>>) {
-  let window = windows.get_single().expect("no primary window");
+pub fn start(
+  mut commands: Commands,
+  spawners: Res<ScrollerGenerators>,
+  asset_server: Res<AssetServer>,
+) {
   let sprite_size = Vec2::new(128., 128.);
 
   commands.spawn(Camera2dBundle::default());
 
-  commands.spawn((
-    ScrollerSize {
-      size: Vec2::new(window.width(), sprite_size.y),
-    },
-    ScrollerBundle {
-      scroller: Scroller {
-        speed: 5.,
-        ..default()
-      },
+  commands
+    .spawn(ScrollerBundle {
+      scroller: Scroller::new(5.),
+      size: Vec2::new(1000., sprite_size.y).into(),
       generator: SingleSpriteGenerator {
-        path: "gems/1.png".into(),
+        texture: asset_server.load("bevy_logo.png"),
         size: sprite_size,
       },
-      spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
-        0.,
-        (sprite_size.y - window.height()) / 2.,
-        0.,
-      ))),
-      ..default()
-    },
-  ));
+      spawner: ScrollerSpawner(*spawners.get::<SingleSpriteGenerator>().unwrap()),
+      direction: Direction::default(),
+      fill_mode: FillMode::default(),
+      spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(0., 200., 0.))),
+    })
+    .with_children(|parent| {
+      parent.spawn(());
+    });
 
-  commands.spawn((
-    ScrollerSize {
-      size: Vec2::new(window.width(), sprite_size.y),
-    },
-    ScrollerBundle {
-      scroller: Scroller {
-        speed: 5.,
-        ..default()
-      },
+  commands
+    .spawn(ScrollerBundle {
+      scroller: Scroller::new(5.),
+      size: Vec2::new(1000., sprite_size.y).into(),
       generator: SingleSpriteGenerator {
-        path: "gems/2.png".into(),
+        texture: asset_server.load("gems/2.png"),
         size: sprite_size,
       },
-      spatial: SpatialBundle::from_transform(Transform {
-        translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 0.),
-        rotation: Quat::from_rotation_z(PI),
-        ..default()
-      }),
-      ..default()
-    },
-  ));
+      spawner: ScrollerSpawner(*spawners.get::<SingleSpriteGenerator>().unwrap()),
+      direction: Direction::default(),
+      fill_mode: FillMode::default(),
+      spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(0., -200., 0.))),
+    })
+    .with_children(|parent| {
+      parent.spawn(());
+    });
 }

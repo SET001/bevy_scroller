@@ -2,7 +2,7 @@ mod shared;
 use std::collections::VecDeque;
 
 use bevy::{prelude::*, window::PrimaryWindow};
-use bevy_scroller::{Scroller, ScrollerBundle, ScrollerSize, SequenceSpriteSheetGenerator};
+use bevy_scroller::{Direction, Scroller, ScrollerBundle, SequenceSpriteSheetGenerator, Size};
 use shared::get_app;
 fn main() {
   get_app("sprite sheet".into())
@@ -30,10 +30,10 @@ fn startup(
   let sprite_size = Vec2::new(64., 64.);
 
   commands.spawn((
-    ScrollerSize {
-      size: Vec2::new(primary_window.width(), sprite_size.y * 2.),
-    },
+    Size(Vec2::new(primary_window.width(), sprite_size.y * 2.)),
     ScrollerBundle {
+      size: Default::default(),
+
       scroller: Scroller {
         speed: 1.,
         ..default()
