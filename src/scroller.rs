@@ -44,7 +44,7 @@ pub struct ScrollerItem {
 }
 
 #[derive(Component)]
-pub struct OnScrollerInit(pub SystemId<Entity>);
+pub struct OnScrollerInit(pub SystemId<In<Entity>>);
 
 #[derive(Copy, Clone, Default, Component, Reflect)]
 pub struct ScrollerSize {
