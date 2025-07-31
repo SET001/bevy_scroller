@@ -6,7 +6,7 @@ pub trait ScrollerApp {
   fn add_scroller_generator<
     T: ScrollerGenerator + Component + Clone,
     M,
-    S: IntoSystem<SpawnerInput<T>, (), M>,
+    S: IntoSystem<In<SpawnerInput<T>>, (), M>,
   >(
     &mut self,
     system: S,
@@ -17,7 +17,7 @@ impl ScrollerApp for App {
   fn add_scroller_generator<
     T: ScrollerGenerator + Component + Clone,
     M,
-    S: IntoSystem<SpawnerInput<T>, (), M>,
+    S: IntoSystem<In<SpawnerInput<T>>, (), M>,
   >(
     &mut self,
     system: S,
