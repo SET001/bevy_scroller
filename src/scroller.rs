@@ -297,7 +297,7 @@ pub fn update(
   time_fixed: Res<Time<Virtual>>,
 ) {
   let step: f32 = 1. / 60.;
-  let delta = time_fixed.delta_seconds();
+  let delta = time_fixed.delta_secs();
 
   for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in
     q_scroller.iter_mut()
