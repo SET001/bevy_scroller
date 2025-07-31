@@ -176,26 +176,20 @@ pub fn init(
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
-          Camera2dBundle {
-            camera: Camera {
-              viewport: Some(Viewport {
-                physical_size: scroller_size.size.as_uvec2(),
-                ..Default::default()
-              }),
-              order: -1,
-              target: RenderTarget::Image(image_handle.clone()),
-              ..default()
-            },
+          Camera {
+            viewport: Some(Viewport {
+              physical_size: scroller_size.size.as_uvec2(),
+              ..Default::default()
+            }),
+            order: -1,
+            target: RenderTarget::Image(image_handle.clone()),
             ..default()
           },
           RenderLayers::layer(render_layer),
           Name::new("Scroller Camera"),
         ));
         parent.spawn((
-          SpriteBundle {
-            texture: image_handle,
-            ..Default::default()
-          },
+          Sprite::from_image(image_handle),
           Name::new("Scroller Camera texture"),
         ));
       });
