@@ -32,7 +32,7 @@ pub fn get_app(title: String) -> App {
 }
 
 fn default_start(mut commands: Commands) {
-  commands.spawn(PerfUiCompleteBundle::default());
+  commands.spawn(PerfUiDefaultEntries::default());
 }
 
 fn on_resize(

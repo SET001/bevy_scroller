@@ -176,6 +176,7 @@ pub fn init(
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
+          Camera2d,
           Camera {
             viewport: Some(Viewport {
               physical_size: scroller_size.size.as_uvec2(),

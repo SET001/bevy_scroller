@@ -38,7 +38,7 @@ pub fn wait_for_load(
   mut app_state: ResMut<NextState<AppStates>>,
 ) {
   if let Some(state) = asset_server.get_load_state(&scroller_images.0) {
-    if state == LoadState::Loaded {
+    if state.is_loaded() {
       app_state.set(AppStates::Run);
     }
   }
