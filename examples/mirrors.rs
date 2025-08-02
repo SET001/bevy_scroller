@@ -11,7 +11,7 @@ fn main() {
 
 pub fn start(world: &mut World) {
   let mirrors = world.register_system(spawn_mirrors);
-  let scroller_entity = world.run_system_once(spawn_scroller);
+  let scroller_entity = world.run_system_once(spawn_scroller).unwrap();
   world
     .entity_mut(scroller_entity)
     .insert(OnScrollerInit(mirrors));
@@ -70,39 +70,30 @@ fn spawn_mirrors(
   let window = windows.get_single().expect("no primary window");
   let sprite_size = Vec2::new(128., 128.);
   commands.spawn((
-    SpriteBundle {
-      texture: scroller.texture_handle.clone(),
-      transform: Transform {
-        translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 10.),
-        rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI),
-        ..default()
-      },
+    Sprite::from_image(scroller.texture_handle.clone()),
+    Transform {
+      translation: Vec3::new(0., (window.height() - sprite_size.y) / 2., 10.),
+      rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI),
       ..default()
     },
     Name::new("Scroller mirror top"),
   ));
 
   commands.spawn((
-    SpriteBundle {
-      texture: scroller.texture_handle.clone(),
-      transform: Transform {
-        translation: Vec3::new((window.width() - sprite_size.x) / 2., 0., 00.),
-        rotation: Quat::from_rotation_z(PI / 2.),
-        ..default()
-      },
+    Sprite::from_image(scroller.texture_handle.clone()),
+    Transform {
+      translation: Vec3::new((window.width() - sprite_size.x) / 2., 0., 00.),
+      rotation: Quat::from_rotation_z(PI / 2.),
       ..default()
     },
     Name::new("Scroller mirror right"),
   ));
 
   commands.spawn((
-    SpriteBundle {
-      texture: scroller.texture_handle.clone(),
-      transform: Transform {
-        translation: Vec3::new((sprite_size.x - window.width()) / 2., 0., 0.),
-        rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI / 2.),
-        ..default()
-      },
+    Sprite::from_image(scroller.texture_handle.clone()),
+    Transform {
+      translation: Vec3::new((sprite_size.x - window.width()) / 2., 0., 0.),
+      rotation: Quat::from_rotation_y(PI) * Quat::from_rotation_z(PI / 2.),
       ..default()
     },
     Name::new("Scroller mirror left"),

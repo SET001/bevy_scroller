@@ -13,6 +13,9 @@ use bevy::{
 
 use crate::ScrollerGenerator;
 
+#[cfg(feature = "dev")]
+use bevy::color::palettes::basic::*;
+
 #[derive(Reflect, Default, Debug, Clone)]
 pub enum ScrollerDirection {
   #[default]
@@ -41,7 +44,7 @@ pub struct ScrollerItem {
 }
 
 #[derive(Component)]
-pub struct OnScrollerInit(pub SystemId<Entity>);
+pub struct OnScrollerInit(pub SystemId<In<Entity>>);
 
 #[derive(Copy, Clone, Default, Component, Reflect)]
 pub struct ScrollerSize {
@@ -57,7 +60,7 @@ pub struct Scroller {
   pub direction: ScrollerDirection,
   pub is_paused: bool,
   pub spawn_edge: f32,
-  pub render_layer: Option<u8>,
+  pub render_layer: Option<usize>,
   pub texture_handle: Handle<Image>,
 }
 
@@ -173,30 +176,36 @@ pub fn init(
 
       commands.entity(entity).with_children(|parent| {
         parent.spawn((
-          Camera2dBundle {
-            camera: Camera {
-              viewport: Some(Viewport {
-                physical_size: scroller_size.size.as_uvec2(),
-                ..Default::default()
-              }),
-              order: -1,
-              target: RenderTarget::Image(image_handle.clone()),
-              ..default()
-            },
+          Camera2d,
+          Camera {
+            viewport: Some(Viewport {
+              physical_size: scroller_size.size.as_uvec2(),
+              ..Default::default()
+            }),
+            order: -1,
+            target: RenderTarget::Image(image_handle.clone()),
             ..default()
           },
           RenderLayers::layer(render_layer),
           Name::new("Scroller Camera"),
         ));
         parent.spawn((
-          SpriteBundle {
-            texture: image_handle,
-            ..Default::default()
-          },
+          Sprite::from_image(image_handle),
           Name::new("Scroller Camera texture"),
         ));
       });
     }
+  }
+}
+
+pub fn on_scroller_resize(
+  mut q_size_changed: Query<(&mut Scroller, &ScrollerSize), Changed<ScrollerSize>>,
+) {
+  for (mut scroller, scroller_size) in q_size_changed.iter_mut() {
+    info!("item resized");
+    scroller.end = scroller_size.size.x / 2. * scroller.direction.as_f32();
+    scroller.start = -scroller.end;
+    scroller.spawn_edge = scroller.end;
   }
 }
 
@@ -232,6 +241,8 @@ pub fn scroller_debug(
   q_scroller: Query<(&GlobalTransform, &Scroller, &ScrollerSize)>,
   mut gizmos: Gizmos,
 ) {
+  use bevy::color::palettes::css::BLUE;
+
   for (global_transform, item, visibility) in q_scroller_item.iter() {
     if let Some(visibility) = visibility {
       if visibility != Visibility::Hidden {
@@ -241,7 +252,7 @@ pub fn scroller_debug(
           translation.truncate(),
           rotation.to_axis_angle().1,
           item.size * scale.truncate(),
-          Color::BLUE,
+          BLUE,
         );
       }
     }
@@ -252,13 +263,13 @@ pub fn scroller_debug(
     gizmos.line_2d(
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / -2. - 20.) * scale.truncate(), //  TODO: take rotation into account
       Vec2::new(scroller.spawn_edge, scroller_size.size.y / 2. + 20.) * scale.truncate(), //  TODO: take rotation into account
-      Color::RED,
+      RED,
     );
     gizmos.rect_2d(
       translation.truncate(),
       rotation.to_axis_angle().1,
       Vec2::new(scroller_size.size.x, scroller_size.size.y) * scale.truncate(),
-      Color::GREEN,
+      GREEN,
     );
     // gizmos.line_2d(
     //   Vec2::new(position.x, scroller.rect.min.y),
@@ -281,7 +292,7 @@ pub fn update(
   time_fixed: Res<Time<Virtual>>,
 ) {
   let step: f32 = 1. / 60.;
-  let delta = time_fixed.delta_seconds();
+  let delta = time_fixed.delta_secs();
 
   for (mut scroller, mut visibility, maybe_need_filling, maybe_on_init, scroller_entity) in
     q_scroller.iter_mut()

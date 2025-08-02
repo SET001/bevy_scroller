@@ -45,17 +45,15 @@ pub fn spritesheet_spawner(
         size: item.size(),
         parent: entity,
       },
-      SpriteSheetBundle {
-        visibility: Visibility::Hidden,
-        sprite: Sprite::default(),
-        atlas: TextureAtlas {
+      Sprite {
+        texture_atlas: Some(TextureAtlas {
           layout: generator.layout.clone(),
           index: item.sprite as usize,
-        },
-        texture: generator.texture.clone(),
-        transform: Transform::from_scale(Vec3::splat(2.0)),
-        ..default()
+        }),
+        image: generator.texture.clone(),
+        ..Default::default()
       },
+      Transform::from_scale(Vec3::splat(2.0)),
     ));
   })
 }

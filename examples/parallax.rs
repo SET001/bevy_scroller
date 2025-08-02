@@ -41,15 +41,16 @@ fn start(
   ];
 
   sizes.into_iter().enumerate().for_each(|(i, size)| {
+    let scroller_size = Vec2::new(primary_window.width(), item_height);
+    info!("setting up initial size: {scroller_size}");
     commands.spawn((
       ScrollerSize {
-        size: Vec2::new(primary_window.width(), item_height),
+        size: scroller_size,
       },
       ScrollerBundle {
         scroller: Scroller {
           speed: scroller_speed_min + i as f32 * scroller_speed_step,
           direction: direction.clone(),
-          render_layer: Some(1),
           ..default()
         },
         generator: SingleSpriteGenerator {

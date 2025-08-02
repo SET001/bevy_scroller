@@ -79,11 +79,7 @@ pub fn sprite_spawner(
         size: item.size(),
         parent: entity,
       },
-      SpriteBundle {
-        texture: handle,
-        visibility: Visibility::Hidden,
-        ..default()
-      },
+      Sprite::from_image(handle),
     ));
   });
 }

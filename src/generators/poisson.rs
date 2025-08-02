@@ -75,11 +75,10 @@ pub fn poisson_generator(
       .with_children(|parent| {
         for subitem in item.sprites.iter() {
           let image_handle = asset_server.load(subitem.path.clone());
-          parent.spawn(SpriteBundle {
-            texture: image_handle,
-            transform: Transform::from_translation(subitem.position.extend(0.)),
-            ..default()
-          });
+          parent.spawn((
+            Sprite::from_image(image_handle),
+            Transform::from_translation(subitem.position.extend(0.)),
+          ));
         }
       });
   }
